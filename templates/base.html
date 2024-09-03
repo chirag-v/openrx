@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CV Pharmacy{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'select2/css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    <header class="custom-header">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand text-body-emphasis" href={% url 'homepage' %}>OpenR<sub>x</sub> ERP</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Customer Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuCustomer" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Customer
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuCustomer">
+                                <li><a class="dropdown-item" href="/customer/customer_list">List customers</a></li>
+                                <li><a class="dropdown-item" href="/customer/add_customer">Add customers</a></li>
+                            </ul>
+                        </li>
+                        <!-- Supplier Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuSupplier" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Supplier
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuSupplier">
+                                <li><a class="dropdown-item" href="/supplier/supplier_list">List Suppliers</a></li>
+                                <li><a class="dropdown-item" href="/supplier/add_supplier">Add Suppliers</a></li>
+                            </ul>
+                        </li>
+                        <!-- Company Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuCompany" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Company
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuCompany">
+                                <li><a class="dropdown-item" href="/company/company_list">List Company</a></li>
+                                <li><a class="dropdown-item" href="/company/add_company">Add Company</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/company/divisions">List Divisions of Companies</a></li>
+                                <li><a class="dropdown-item" href="/company/divisions/create">Add a Division to a Company</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/company/add_medical_representative">Add a Medical Representative</a></li>
+                            </ul>
+                        </li>
+                        <!--Item Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuItem" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Item
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuItem">
+                                <li><a class="dropdown-item" href="/item/list">List Items</a></li>
+                                <li><a class="dropdown-item" href="/item/create">Add Items</a></li>
+                            </ul>
+                        <!-- Purchase Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuPurchase" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Purchase
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuPurchase">
+                                <li><a class="dropdown-item" href="/purchase/create">Purchase Entry</a></li>
+                                <li><a class="dropdown-item" href="/purchase/purchase_list">Purchase List</a></li>
+                            </ul>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid mt-4">
+        {% block content %}
+        <!-- Content goes here -->
+        {% endblock %}
+    </main>
+
+    <footer class="footer text-center text-lg-start">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Footer Content</h5>
+                    <p>
+                        Here you can use rows and columns to organize your footer content.
+                    </p>
+                </div>
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="#" class="text-dark">Link 1</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'select2/js/select2.min.js' %}"></script>
+    <script>
+            // Initialize Select2
+    $(document).ready(function() {
+        $('select').select2();
+    });
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Edit Item</h2>
+    <form method="post" class="mt-3" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.item_type|as_crispy_field }}
+            </div>
+        </div>
+        <div id="form-container">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.name|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.sku|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.image|as_crispy_field }}
+                     <img id="image-preview" src="{% if form.instance.image %}{{ form.instance.image.url }}{% else %}#{% endif %}" alt="Image Preview" style="display:{% if form.instance.image %}block{% else %}none{% endif %}; max-width: 100%; height: auto; margin-top: 10px;"/>
+                     </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.mrp|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.purchase_price|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.selling_price|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.landing_cost|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.weight|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    {{ form.use|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.company|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.division|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row medicine-fields">
+                <div class="col-md-4 mb-3">
+                    {{ form.dosage_form|as_crispy_field }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.strength|as_crispy_field }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.packing|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row medicine-fields">
+                <div class="col-md-6 mb-3">
+                    {{ form.batch_number|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.expiry_date|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row medicine-fields">
+                <div class="col-md-4 mb-3">
+                    {{ form.prescription_required|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.gst|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.hsn|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form.sold_loose|as_crispy_field }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.sold_online|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const companySelect = $('#id_company');  // Use jQuery to select the element with Select2
+    const divisionSelect = document.getElementById('id_division');
+
+    // Ensure that the select element is found
+    if (companySelect.length > 0) {
+        console.log('Company select element found:', companySelect);
+
+        // Update division dropdown based on selected company
+        const updateDivisions = (companyId) => {
+            const url = `/company/get-divisions/${companyId}/`;
+            console.log(`Fetching divisions for company ID: ${companyId}`);
+            
+            fetch(url)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Division data received:', data);
+                    divisionSelect.innerHTML = ''; // Clear the existing options
+                    
+                    if (data.length > 0) {
+                        data.forEach(division => {
+                            const option = document.createElement('option');
+                            option.value = division.id;
+                            option.textContent = division.name; // Display division in the format (Company Name) - Division Name
+                            divisionSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No divisions available';
+                        divisionSelect.appendChild(option);
+                    }
+
+                    // Force the browser to update the dropdown (if necessary)
+                    divisionSelect.dispatchEvent(new Event('change'));
+                    console.log('Division dropdown updated');
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        };
+
+        // Attach the change event to the Select2 component
+        companySelect.on('change', function () {
+            const companyId = $(this).val();
+            console.log('Company changed:', companyId);  // This should now log when a company is selected
+            
+            if (companyId) {
+                updateDivisions(companyId);
+            } else {
+                divisionSelect.innerHTML = ''; // Clear the division dropdown if no company is selected
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Please select a company first';
+                divisionSelect.appendChild(option);
+            }
+        });
+
+        // If there's an existing selected company on page load, load its divisions
+        if (companySelect.val()) {
+            console.log('Initial company selected:', companySelect.val());
+            updateDivisions(companySelect.val());
+        }
+    } else {
+        console.error('Company select element not found');
+    }
+
+    // Handling medicine fields based on item type
+    const itemTypeRadios = document.querySelectorAll('input[name="item_type"]');
+    const medicineFields = document.querySelectorAll('.medicine-fields');
+    const fieldsToNullify = [
+        'id_dosage_form',
+        'id_strength',
+        'id_packing',
+        'id_batch_number',
+        'id_expiry_date',
+        'id_prescription_required'
+    ];
+
+    const toggleMedicineFields = () => {
+        const itemTypeValue = document.querySelector('input[name="item_type"]:checked').value;
+        console.log('Item type selected:', itemTypeValue);
+        
+        if (itemTypeValue === 'nonmedicalitem') {
+            medicineFields.forEach(field => field.style.display = 'none');
+            fieldsToNullify.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = '';
+                }
+            });
+        } else {
+            medicineFields.forEach(field => field.style.display = '');
+        }
+    };
+
+    // Initial check on page load
+    toggleMedicineFields();
+
+    // Add event listener to toggle fields on item type change
+    itemTypeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleMedicineFields);
+    });
+});
+</script>
+{% endblock %}

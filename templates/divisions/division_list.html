@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Division List{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Division List</h2>
+            <!-- Search form with Add New Division button -->
+            <form method="get" action="" class="mb-4 d-flex align-items-end">
+                <div class="input-group me-2">
+                    <input type="text" class="form-control" placeholder="Search divisions" name="search" value="{{ search_query }}">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+                <a href="{% url 'division_create' %}" class="btn btn-success">Add New Division</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table structure for companies and divisions -->
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <table class="table table-dark table-striped table-hover shadow">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Company</th>
+                        <th>Divisions</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for company in page_obj %}
+<tr>
+    <td>{{ company.name }}</td>
+    <td class="flex-fill w-auto h-auto">
+        <ul class="flex-fill">
+            {% for division in company.ordered_divisions %}
+            <li class="division-item">{{ division.name }}</li>
+            {% endfor %}
+        </ul>
+    </td>
+    <td>
+        <ul class="action-list">
+            {% for division in company.ordered_divisions %}
+            <li class="action-item">
+                <a href="{% url 'division_edit' division.id %}" class="btn btn-sm btn-primary m-1">Edit</a>
+                <a href="{% url 'division_delete' division.id %}" class="btn btn-sm btn-danger m-1">Delete</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="3">No divisions found.</td>
+</tr>
+{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">First</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a></li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">Last</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
