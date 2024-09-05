@@ -3,9 +3,12 @@ __pycache__/
 *.py[cod]
 
 # Virtual environment directories
+.venv/
 venv/
 ENV/
-.venv/
+
+# Environment variables
+.env
 
 # Log files
 *.log
@@ -19,3 +22,4 @@ static/
 staticfiles/
 item_images/
 .idea/
+
