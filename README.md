@@ -19,7 +19,7 @@
 
 ## Documentation
 
-Detailed documentation is available at [openrxerp.com](http://openrxerp.com).
+Detailed documentation is available at [openrxerp.com](https://openrxerp.com).
 
 ## Getting Started
 
