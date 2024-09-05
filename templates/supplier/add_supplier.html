@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Add Supplier</h2>
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+
+        <div class="row">
+            <!-- Name -->
+            <div class="col-md-6 mb-3">
+                {{ form.name|as_crispy_field }}
+            </div>
+            <!-- Address Line 1 -->
+            <div class="col-md-6 mb-3">
+                {{ form.address_line1|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Address Line 2 -->
+            <div class="col-md-6 mb-3">
+                {{ form.address_line2|as_crispy_field }}
+            </div>
+            <!-- Landmark -->
+            <div class="col-md-6 mb-3">
+                {{ form.landmark|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- City -->
+            <div class="col-md-4 mb-3">
+                {{ form.city|as_crispy_field }}
+            </div>
+            <!-- Pincode -->
+            <div class="col-md-4 mb-3">
+                {{ form.pincode|as_crispy_field }}
+            </div>
+            <!-- Country -->
+            <div class="col-md-4 mb-3">
+                {{ form.country|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Email -->
+            <div class="col-md-4 mb-3">
+                {{ form.email|as_crispy_field }}
+            </div>
+            <!-- Phone -->
+            <div class="col-md-4 mb-3">
+                {{ form.phone|as_crispy_field }}
+            </div>
+            <!-- Phone 2 -->
+            <div class="col-md-4 mb-3">
+                {{ form.phone2|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Phone 3 -->
+            <div class="col-md-6 mb-3">
+                {{ form.phone3|as_crispy_field }}
+            </div>
+            <!-- Mobile -->
+            <div class="col-md-6 mb-3">
+                {{ form.mobile|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Owner Name -->
+            <div class="col-md-6 mb-3">
+                {{ form.owner_name|as_crispy_field }}
+            </div>
+            <!-- Owner's Mobile -->
+            <div class="col-md-6 mb-3">
+                {{ form.owner_mobile|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Manager Name -->
+            <div class="col-md-6 mb-3">
+                {{ form.manager_name|as_crispy_field }}
+            </div>
+            <!-- Manager's Mobile -->
+            <div class="col-md-6 mb-3">
+                {{ form.manager_mobile|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- GST Registration -->
+            <div class="col-md-6 mb-3">
+                {{ form.gst_registration|as_crispy_field }}
+            </div>
+            <!-- GSTIN -->
+            <div class="col-md-6 mb-3">
+                {{ form.gstin|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- State Code -->
+            <div class="col-md-4 mb-3">
+                {{ form.state_code|as_crispy_field }}
+            </div>
+            <!-- State -->
+            <div class="col-md-4 mb-3">
+                {{ form.state|as_crispy_field }}
+            </div>
+            <!-- PAN -->
+            <div class="col-md-4 mb-3">
+                {{ form.pan|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Drug License 1 -->
+            <div class="col-md-6 mb-3">
+                {{ form.drug_license1|as_crispy_field }}
+            </div>
+            <!-- Drug License 1 Validity -->
+            <div class="col-md-6 mb-3">
+                {{ form.drug_license1_validity|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Drug License 2 -->
+            <div class="col-md-6 mb-3">
+                {{ form.drug_license2|as_crispy_field }}
+            </div>
+            <!-- Drug License 2 Validity -->
+            <div class="col-md-6 mb-3">
+                {{ form.drug_license2_validity|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Food Registration -->
+            <div class="col-md-6 mb-3">
+                {{ form.food_registration|as_crispy_field }}
+            </div>
+            <!-- Food Registration Validity -->
+            <div class="col-md-6 mb-3">
+                {{ form.food_registration_validity|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Status -->
+            <div class="col-md-6 mb-3">
+                {{ form.status|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const gstinField = document.getElementById('id_gstin');
+    const stateCodeField = document.getElementById('id_state_code');
+    const stateField = document.getElementById('id_state');
+    const panField = document.getElementById('id_pan');
+
+    gstinField.addEventListener('change', function() {
+        const gstinValue = this.value;
+        const gstinRegex = /^\d{2}[A-Za-z0-9]{11}Z[A-Za-z0-9]$/;
+
+        if (gstinRegex.test(gstinValue)) {
+            const stateCode = gstinValue.substring(0, 2);
+            const pan = gstinValue.substring(2, 12);
+
+            stateCodeField.value = stateCode;
+            panField.value = pan;
+
+            // Fetch state name from the server
+            fetch(`/gst/get-state-name?code=${stateCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.stateName) { // Ensure data.stateName exists
+                        stateField.value = data.stateName;
+                    } else {
+                        console.error('State name not found in response:', data);
+                    }
+                })
+                .catch(error => console.error('Error fetching state name:', error));
+        }
+    });
+
+    // Initial check in case of pre-selected value or form errors
+    const event = new Event('change');
+    gstinField.dispatchEvent(event);
+});
+</script>
+
+{% endblock %}
