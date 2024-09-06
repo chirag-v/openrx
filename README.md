@@ -1,3 +1,5 @@
+<img src="./templates/logo/openrx-logo-small.png" alt="OpenRxERP Logo" width="220px"/>
+
 # OpenRxERP
 
 **OpenRxERP** is a comprehensive, secure, on-premise solution designed specifically for retail pharmacies in India, offering cloud flexibility. It aims to simplify and harmonize the various aspects of pharmacy management, including:
