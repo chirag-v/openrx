@@ -18,7 +18,6 @@ ENV/
 Thumbs.db
 
 
-static/
 staticfiles/
 item_images/
 .idea/

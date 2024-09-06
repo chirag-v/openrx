@@ -1,0 +1,49 @@
+    .broader-field {
+        transition: width 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        width: 150%;
+        position: relative;
+        z-index: 10; /* Ensures the focused field is on top */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Adds a shadow for prominence */
+    }
+    .inline-input {
+        display: flex;
+        align-items: center;
+    }
+    .inline-input input {
+        flex: 1;
+        margin-right: 10px;
+    }
+    .inline-input p {
+        margin: 0;
+        padding: 0;
+    }
+    .table-dark th, .table-dark td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .table-dark th.item-name, .table-dark td.item-name {
+        max-width: 400px;
+    }
+    .table-dark td.item-name div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .select2-container--default .select2-selection--single {
+        height: 100%;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        word-wrap: break-word;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .select2-container--default .select2-selection--single.select2-selection--focus {
+        width: 150%;
+        z-index: 10;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+
