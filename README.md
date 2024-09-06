@@ -32,6 +32,7 @@ Detailed documentation is available at [openrxerp.com](https://openrxerp.com).
 We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
 ## License
 
+[![GPLv3 Logo](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.html)
 OpenRxERP is licensed under the GNU General Public License v3.0 (GPL-3.0).
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
