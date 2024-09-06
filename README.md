@@ -25,7 +25,7 @@ Detailed documentation is available at [openrxerp.com](https://openrxerp.com).
 
 1. Clone the repository.
 2. Set up a virtual environment.
-3. Follow the installation steps in the documentation to run the application locally.
+3. Follow the [installation steps in the documentation](https://openrxerp.com/installation/) to run the application locally.
 
 ## Contributing
 
