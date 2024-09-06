@@ -27,6 +27,13 @@ Detailed documentation is available at [openrxerp.com](https://openrxerp.com).
 2. Set up a virtual environment.
 3. Follow the [installation steps in the documentation](https://openrxerp.com/installation/) to run the application locally.
 
+## Join the Community
+
+Need help or have questions about using OpenRxERP? Join our community to get instant help from other users!
+
+[Join the Telegram Group](https://t.me/+QMHXwZ3INek3YWY1)
+
+
 ## Contributing
 
 We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
