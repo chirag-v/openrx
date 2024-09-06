@@ -31,7 +31,7 @@ Detailed documentation is available at [openrxerp.com](https://openrxerp.com).
 
 Need help or have questions about using OpenRxERP? Join our community to get instant help from other users!
 
-[Join the Telegram Group](https://t.me/+QMHXwZ3INek3YWY1)
+[Join the Telegram Group](https://t.me/+_P8lblDp8QU0ODU1)
 
 
 ## Contributing
