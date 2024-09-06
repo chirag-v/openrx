@@ -15,7 +15,9 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
-                <a class="navbar-brand text-body-emphasis" href={% url 'homepage' %}>OpenR<sub>x</sub> ERP</a>
+                <a class="navbar-brand text-body-emphasis" href={% url 'homepage' %}>
+    <img src="{% static 'logo/openrx-logo-small.png' %}" alt="OpenRx ERP" style="height: 50px; width: auto;">
+</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -90,17 +92,19 @@
         <div class="container p-4">
             <div class="row">
                 <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Footer Content</h5>
+                    <h5 class="text-uppercase">GNU General Public License v3 Notice</h5>
                     <p>
-                        Here you can use rows and columns to organize your footer content.
+                        © 2024 OpenRxERP. This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
                     </p>
                 </div>
                 <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
                     <h5 class="text-uppercase">Links</h5>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="#" class="text-dark">Link 1</a>
-                        </li>
+                     <li><a href="https://openrxerp.com/" target="_blank" rel="noopener noreferrer">Official Documentation</a></li>
+                    <li><a href="https://github.com/chirag-v/openrx" target="_blank" rel="noopener noreferrer">OpenRx repo on GitHub</a></li>
+                    <li><a href="https://t.me/+0IGj5Yl_kaw4NTY1" target="_blank" rel="noopener noreferrer">Community on Telegram</a></li>
+
                     </ul>
                 </div>
             </div>
