@@ -16,8 +16,8 @@
                 <td>{{ item.name }}</td>
                 <td>{{ item.type }}</td>
                 <td>
-                    <a href="{% url 'edit_item' item.pk %}" class="btn btn-warning">Edit</a>
-                    <a href="{% url 'delete_item' item.pk %}" class="btn btn-danger">Delete</a>
+                    <a href="{% url 'edit_item' item.pk %}" class="btn btn-sm btn-primary m-1">Edit</a>
+                    <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-danger m-1">Delete</a>
                 </td>
             </tr>
             {% endfor %}
