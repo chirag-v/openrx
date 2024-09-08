@@ -1,4 +1,4 @@
-<img src="./templates/logo/openrx-logo-small.png" alt="OpenRxERP Logo" width="220px"/>
+<img src="./static/logo/openrx-logo-small.png" alt="OpenRxERP Logo" width="220px"/>
 
 # OpenRxERP
 
