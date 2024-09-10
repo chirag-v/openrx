@@ -5,32 +5,60 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <h2 class="text-center mb-4">Supplier List</h2>
             
             <!-- Search form -->
             <form method="get" action="" class="mb-4">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search suppliers" name="search" value="{{ request.GET.search }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </div>
+                    <!-- Search Input -->
+                    <input type="text" class="form-control search-input" placeholder="Search suppliers" name="search" value="{{ request.GET.search }}">
+                    
+                    <!-- Improved Search Button -->
+                    <button class="btn btn-search" type="submit">
+                        &#128269; <!-- Unicode for the search icon -->
+                    </button>
                 </div>
             </form>
 
             <!-- Table for listing suppliers -->
             <div class="table-responsive">
-                <table class="table table-dark table-striped">
+                <table class="table table-dark table-striped table-hover">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Name</th>
+                            <th>Name & Contact</th>
+                            <th>Address</th>
+                            <th>GSTIN</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for supplier in page_obj %}
                         <tr>
-                            <td>{{ supplier.name }}</td>
+                            <td>
+                                {% if supplier.name %}{{ supplier.name }}<br>{% endif %}
+                                {% if supplier.phone %}{{ supplier.phone }}<br>{% endif %}
+                                {% if supplier.phone2 %}{{ supplier.phone2 }}<br>{% endif %}
+                                {% if supplier.phone3 %}{{ supplier.phone3 }}<br>{% endif %}
+                                {% if supplier.owner_name and supplier.owner_phone %}{{ supplier.owner_name }}: {{ supplier.owner_phone }}<br>{% endif %}
+                                {% if supplier.manager_name and supplier.manager_phone %}{{ supplier.manager_name }}: {{ supplier.manager_phone }}{% endif %}
+                            </td>
+                            <td>
+                                {% if supplier.address_line1 %}{{ supplier.address_line1 }}<br>{% endif %}
+                                {% if supplier.address_line2 %}{{ supplier.address_line2 }}<br>{% endif %}
+                                {% if supplier.city and supplier.pincode %}{{ supplier.city }} - {{ supplier.pincode }}<br>{% endif %}
+                                {% if supplier.country %}{{ supplier.country }}{% endif %}
+                            </td>
+                            <td>
+                                {% if supplier.gstin %}
+                                    {{ supplier.gstin }}
+                                {% else %}
+                                    <div class="alert alert-danger text-center" style="padding: 0.3em" role="alert">
+                                        Add GSTIN for <br>{{ supplier.name }} <br>to calculate ITC
+                                    </div>
+                                {% endif %}
+                            </td>
+                        
                             <td>
                                 <a href="{% url 'edit_supplier' supplier.id %}" class="btn btn-sm btn-primary mx-1">Edit</a>
                                 <a href="{% url 'delete_supplier' supplier.id %}" class="btn btn-sm btn-danger mx-1">Delete</a></td>

@@ -11,8 +11,13 @@
             <!-- Search form -->
             <form method="get" action="" class="mb-4">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search customers" name="search" value="{{ request.GET.search }}">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    <!-- Search Input -->
+                    <input type="text" class="form-control search-input" placeholder="Search customers" name="search" value="{{ request.GET.search }}">
+                    
+                    <!-- Improved Search Button -->
+                    <button class="btn btn-search" type="submit">
+                        &#128269; <!-- Unicode for the search icon -->
+                    </button>
                 </div>
             </form>
 
@@ -36,7 +41,7 @@
                                         {% else %}
                                             {{ customer.firm_name|default_if_none:'' }}
                                         {% endif %}</td>
-                                <td> {{ customer.email|default_if_none:'' }}{% if customer.mobile %} ({{ customer.mobile }}){% endif %} </td>
+                                <td> {{ customer.email|default_if_none:'' }}<br>{% if customer.mobile %} ({{ customer.mobile }}){% endif %} </td>
                                 <td>
                                     <a href="{% url 'edit_customer' customer.id %}" class="btn btn-sm btn-primary mx-1">Edit</a>
                                     <a href="{% url 'delete_customer' customer.id %}" class="btn btn-sm btn-danger mx-1">Delete</a></td>

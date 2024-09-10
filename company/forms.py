@@ -13,8 +13,6 @@ class CompanyForm(forms.ModelForm):
             'medical_representative': forms.Select(),
         }
         help_texts ={
-            'name': 'Enter the name of the company',
-            'suppliers': 'Select the suppliers for this company',
             'medical_representative': 'Select the current medical representative appointed for this company',
         }
         labels={

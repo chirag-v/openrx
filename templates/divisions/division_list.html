@@ -4,58 +4,66 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center mb-4">
+    <div class="row justify-content-center mb-4 ">
         <div class="col-md-8">
             <h2 class="text-center mb-4">Division List</h2>
             <!-- Search form with Add New Division button -->
-            <form method="get" action="" class="mb-4 d-flex align-items-end">
-                <div class="input-group me-2">
-                    <input type="text" class="form-control" placeholder="Search divisions" name="search" value="{{ search_query }}">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+            <form method="get" action="" class="mb-4">
+                <div class="input-group">
+                    <!-- Search Input -->
+                    <input type="text" class="form-control search-input" placeholder="Search a Company or its Division" name="search" value="{{ request.GET.search }}">
+                    
+                    <!-- Improved Search Button -->
+                    <button class="btn btn-search" type="submit">
+                        &#128269; <!-- Unicode for the search icon -->
+                    </button>
+                                    <a href="{% url 'division_create' %}" class="btn btn-success" style="margin-left: 1em">Add New Division</a>
                 </div>
-                <a href="{% url 'division_create' %}" class="btn btn-success">Add New Division</a>
             </form>
         </div>
     </div>
 
     <!-- Table structure for companies and divisions -->
-    <div class="row justify-content-center">
-        <div class="col-md-12">
+    <div class="table-responsive d-flex justify-content-center">
+        <div class="col-md-8">
             <table class="table table-dark table-striped table-hover shadow">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Company</th>
-                        <th>Divisions</th>
-                        <th>Action</th>
+                        <th>Company<br> &#8658; Division(s)</th>
+                        <th>MR Name (contact)</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for company in page_obj %}
-<tr>
-    <td>{{ company.name }}</td>
-    <td class="flex-fill w-auto h-auto">
-        <ul class="flex-fill">
-            {% for division in company.ordered_divisions %}
-            <li class="division-item">{{ division.name }}</li>
-            {% endfor %}
-        </ul>
-    </td>
-    <td>
-        <ul class="action-list">
-            {% for division in company.ordered_divisions %}
-            <li class="action-item">
-                <a href="{% url 'division_edit' division.id %}" class="btn btn-sm btn-primary m-1">Edit</a>
-                <a href="{% url 'division_delete' division.id %}" class="btn btn-sm btn-danger m-1">Delete</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </td>
-</tr>
-{% empty %}
-<tr>
-    <td colspan="3">No divisions found.</td>
-</tr>
-{% endfor %}
+                    {% for company in page_obj %}
+                    <tr>
+                        <td colspan="3"><hr class="border-2 mx-3 my-2 mt-0 text-center"><strong>{{ company.name }}</strong></td>
+                    </tr>
+                    {% if company.ordered_divisions %}
+                        {% for division in company.ordered_divisions %}
+                        <tr>
+                            <td> &#8658; {{ division.name }}</td>
+                            <td>
+                                                                {% if division.medical_representative %}
+                                    {{ division.medical_representative.name }} ({{ division.medical_representative.mobile_number }})
+                                {% else %}
+                                    Not assigned
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a href="{% url 'division_edit' division.id %}" class="btn btn-sm btn-primary me-2">Edit</a>
+                                <a href="{% url 'division_delete' division.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td></td>
+                        <td colspan="2">No divisions found.</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

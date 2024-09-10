@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ItemForm
 from .models import Item
 from django.http import JsonResponse
+from django.db.models import Q
 
 
 
@@ -18,8 +19,20 @@ def create_item(request):
 
 
 def item_list(request):
-    items = Item.objects.all()
-    return render(request, 'item/item_list.html', {'items': items})
+    query = request.GET.get('search')
+    if query:
+        items = Item.objects.filter(
+            Q(name__icontains=query) |
+            Q(sku__icontains=query)
+        )
+    else:
+        items = Item.objects.all()
+
+    context = {
+        'items': items,
+        'search_query': query,
+    }
+    return render(request, 'item/item_list.html', context)
 
 
 def edit_item(request, pk):

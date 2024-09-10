@@ -1,5 +1,6 @@
 /* File: static/css/custom.css */
 
+
 body {
     background-color: #343a40;
     color: #f8f9fa;
@@ -26,23 +27,55 @@ body {
     color: #f8f9fa;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    padding: 5px 10px;
-    font-size: 14px;
-    width: auto;
+/* Common button styles */
+.btn-primary,
+.btn-danger {
+    padding: 0.5em 1em; /* Uniform padding for both buttons */
+    font-size: 14px; /* Uniform font size */
+    width: auto; /* Ensure buttons are auto-sized */
+    border-radius: 4px; /* Rounded corners for a modern look */
+    margin-bottom: 0.5em; /* Consistent bottom margin for spacing */
+    color: #ffffff; /* White text for both button types */
+    display: inline-block; /* Aligns buttons in a line */
+    text-align: center; /* Centers text inside buttons */
+    border-width: 1px; /* Consistent border width */
+    cursor: pointer; /* Pointer cursor for buttons */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition for hover effects */
 }
 
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+/* Primary button styles */
+.btn-primary {
+    background-color: #007bff; /* Primary button background */
+    border-color: #007bff; /* Primary button border color */
 }
+
+/* Danger button styles */
+.btn-danger {
+    background-color: #dc3545; /* Danger button background */
+    border-color: #dc3545; /* Danger button border color */
+}
+
+/* Hover effects for primary button */
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    border-color: #0056b3; /* Darker border on hover */
+}
+
+/* Hover effects for danger button */
+.btn-danger:hover {
+    background-color: #c82333; /* Darker red on hover */
+    border-color: #c82333; /* Darker border on hover */
+}
+}
+
+
 
 .footer {
     background-color: #212529;
     color: #f8f9fa;
+    margin-top: 3em;
 }
+
 
 .footer a {
     color: #f8f9fa;
@@ -54,22 +87,112 @@ body {
     margin: 0 auto;
 }
 
+/* Search Input Field */
+.search-input {
+    background-color: #343a40; /* Dark grey background to match page background */
+    border-color: #6c757d; /* Gray border for input field */
+    color: #f8f9fa; /* White text color for input */
+    padding: 0.5em; /* Consistent padding */
+    font-size: 14px; /* Standard font size */
+    border-radius: 4px 0 0 4px; /* Rounded corners for the left side only */
+    border-right: none; /* Remove the right border to merge with the button */
+    transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+}
+
+/* Search Input Field */
+.search-input {
+    background-color: #343a40; /* Dark grey background to match page background */
+    border-color: #6c757d; /* Gray border for input field */
+    color: #f8f9fa; /* White text color for input */
+    padding: 0.5em; /* Consistent padding */
+    font-size: 14px; /* Standard font size */
+    border-radius: 4px 0 0 4px; /* Rounded corners for the left side only */
+    border-right: none; /* Remove the right border to merge with the button */
+    transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+}
+
+/* Improved Search Button */
+.btn-search {
+    background-color: #6c757d; /* Neutral gray background */
+    border-color: #6c757d; /* Matching border color */
+    color: #f8f9fa; /* White text color */
+    padding: 0.5em 1em; /* Consistent padding */
+    font-size: 14px; /* Standard font size */
+    border-radius: 0 4px 4px 0; /* Rounded corners for the right side only */
+    border-left: none; /* Remove the left border to merge with the input */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
+}
+
+/* Hover effect for the Search Button */
+.btn-search:hover {
+    background-color: #5a6268; /* Darker gray on hover */
+    border-color: #5a6268; /* Matching border color on hover */
+    color: #ffffff; /* White text color on hover */
+}
+
+/* Focus effect for Search Input and Button */
+.search-input:focus,
+.btn-search:focus,
+.btn-search:active {
+    background-color: #5a6268; /* Even darker gray for focus and active states */
+    border-color: #5a6268; /* Matching border color for focus */
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); /* Add shadow to indicate focus */
+    outline: none; /* Remove default outline for input field */
+}
+
+/* Align the input and button */
+.input-group {
+    display: flex; /* Flex display to align the input and button together */
+    align-items: stretch; /* Ensure both are the same height */
+}
+
+
+
+
 /* Styles for pagination */
 .pagination .page-link {
-    color: #f8f9fa;
-    background-color: #343a40;
-    border-color: #343a40;
+    color: #f8f9fa; /* Whitish text color */
+    background-color: #343a40; /* Dark background for pagination links */
+    border-color: #343a40; /* Dark border color */
+    padding: 0.5em 0.75em; /* Consistent padding for all pagination links */
+    margin: 0 0.2em; /* Small margin between pagination items */
+    border-radius: 4px; /* Rounded corners for a modern look */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transitions for hover and active states */
+    text-decoration: none; /* Removes underline from links */
 }
 
+/* Active pagination item */
 .pagination .page-item.active .page-link {
-    background-color: #007bff;
-    border-color: #007bff;
+    color: #ffffff; /* White text color for active state */
+    background-color: #007bff; /* Blue background for active state */
+    border-color: #007bff; /* Blue border for active state */
+    cursor: default; /* Default cursor for active state */
 }
 
+/* Hover effect for pagination items */
 .pagination .page-item:hover .page-link {
-    background-color: #495057;
-    border-color: #495057;
+    color: #f8f9fa; /* Whitish text color on hover */
+    background-color: #495057; /* Darker background for hover state */
+    border-color: #495057; /* Darker border color for hover state */
+    text-decoration: none; /* Prevents text underline on hover */
 }
+
+/* Disabled pagination item */
+.pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Gray color for disabled state */
+    background-color: #343a40; /* Matches the background of inactive state */
+    border-color: #343a40; /* Matches the border of inactive state */
+    cursor: not-allowed; /* Not allowed cursor for disabled state */
+    opacity: 0.6; /* Slightly transparent for a disabled look */
+}
+
+/* Additional styles for better alignment */
+.pagination {
+    display: flex; /* Align pagination items in a row */
+    justify-content: center; /* Center pagination in the container */
+    padding: 1em 0; /* Padding around pagination */
+}
+
 
 /* Form styling */
 form.bg-dark {
@@ -189,31 +312,14 @@ textarea::placeholder {
 }
 
 
-.select2-container--default .select2-selection--single {
-    background-color: grey;
-    color: white;
-}
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: white;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__arrow b {
-    border-color: white transparent transparent transparent;
-}
-
-.select2-container--default .select2-results__option {
-    background-color: grey;
-    color: white; /* Optional: to ensure text is visible */
-}
-
-.select2-container--default .select2-results__option--highlighted {
-    background-color: darkgrey;
-    color: white; /* Optional: to ensure text is visible */
-}
 
 .no-label-in-table label {
     display: none;
+}
+
+.form-text {
+    color: #F8F9FA; /* Change this to your desired color */
 }
 
 /* Ensure you load your custom.css in your Django template */
@@ -237,3 +343,74 @@ input[type="number"] {
     -moz-appearance: textfield; /* Firefox */
 }
 
+/* CSS for select2 */
+/* Main field customization (inactive state) */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    background-color: #808080; /* Gray background for the select field */
+    border-color: #DEE2E6; /* Light gray border */
+    color: #f8f9fa; /* Whitish text color */
+    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out; /* Smooth transition for color changes */
+}
+
+/* Selected text color for single select dropdown when inactive */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #f8f9fa !important; /* Whitish text color for the selected item */
+}
+
+/* Active state customization for single select dropdown */
+.select2-container--default .select2-selection--single:focus .select2-selection__rendered,
+.select2-container--default .select2-selection--single:hover .select2-selection__rendered {
+    background-color: #FFFFFF; /* White background when active */
+    color: #000000 !important; /* Black text color when active */
+}
+
+/* Select2 multi-select chosen items */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #808080; /* Same gray background for chosen items */
+    border: 1px solid #DEE2E6; /* Light gray border around selected items */
+    color: #f8f9fa; /* Whitish text color for selected items */
+    margin: 2px 5px 2px 0; /* Consistent spacing around items */
+}
+
+/* Hover and focus customization for single and multi-select fields */
+.select2-container--default .select2-selection--single:hover,
+.select2-container--default .select2-selection--multiple:hover,
+.select2-container--default .select2-selection--single:focus,
+.select2-container--default .select2-selection--multiple:focus {
+    background-color: #FFFFFF; /* White background on hover or focus */
+    border-color: #007bff; /* Blue border color on hover or focus */
+    color: #000000; /* Black text color on hover or focus */
+}
+
+/* Dropdown menu customization */
+.select2-container--default .select2-results > .select2-results__options {
+    background-color: #343A40; /* Darker background for the dropdown */
+    color: #FFFFFF; /* White font color for dropdown options */
+}
+
+/* Highlighted option customization */
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-container--default .select2-results__option--highlighted {
+    background-color: #2c3035; /* Slightly darker background for highlighted option */
+    color: #FFFFFF; /* White font color for highlighted text */
+}
+
+/* Placeholder text color */
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #f8f9fa; /* Whitish font color for placeholder */
+    opacity: 0.7; /* Slightly dimmer placeholder text */
+}
+
+/* Dropdown arrow color */
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #FFFFFF transparent transparent transparent; /* White arrow */
+}
+
+/* Disabled state customization */
+.select2-container--default .select2-selection--single[aria-disabled='true'],
+.select2-container--default .select2-selection--multiple[aria-disabled='true'] {
+    background-color: #495057; /* Background for disabled state */
+    color: #FFFFFF; /* White font color, dimmed for disabled state */
+    opacity: 0.5; /* Lower opacity for disabled state */
+}
