@@ -5,12 +5,6 @@ from .models import Purchase, PurchaseItem
 from .forms import PurchaseForm, PurchaseItemForm
 from django.contrib import messages
 
-# views.py
-
-def purchase_entry(request):
-    form = PurchaseForm()
-    return render(request, 'purchase/purchase_entry.html', {'form': form})
-
 
 def create_purchase(request):
     PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm, extra=0)

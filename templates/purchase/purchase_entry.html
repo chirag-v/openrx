@@ -86,7 +86,8 @@
         </div>
     </form>
 </div>
-
+    
+    
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const addItemButton = document.getElementById('add-item');
@@ -217,9 +218,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Apply Select2 to existing supplier select
     $('#supplier-select').select2();
+
+    // Function to calculate discount amount based on percentage
+    function calculateDiscountAmount(purchaseRate, quantity, discountPercentage) {
+        return (purchaseRate * quantity) * (discountPercentage / 100);
+    }
+
+    // Function to calculate discount percentage based on amount
+    function calculateDiscountPercentage(purchaseRate, quantity, discountAmount) {
+        return (discountAmount / (purchaseRate * quantity)) * 100;
+    }
+
+    // Event listener for discount percentage change
+    $(document).on('input', 'input[name$="item_discount_percentage"]', function () {
+        const row = $(this).closest('tr');
+        const purchaseRate = parseFloat(row.find('input[name$="purchase_rate"]').val()) || 0;
+        const quantity = parseInt(row.find('input[name$="quantity"]').val()) || 0;
+        const discountPercentage = parseFloat($(this).val()) || 0;
+
+        if (purchaseRate > 0 && quantity > 0) {
+            const discountAmount = calculateDiscountAmount(purchaseRate, quantity, discountPercentage);
+            row.find('input[name$="item_discount_amount"]').val(discountAmount.toFixed(2));
+        }
+    });
+
+    // Event listener for discount amount change
+    $(document).on('input', 'input[name$="item_discount_amount"]', function () {
+        const row = $(this).closest('tr');
+        const purchaseRate = parseFloat(row.find('input[name$="purchase_rate"]').val()) || 0;
+        const quantity = parseInt(row.find('input[name$="quantity"]').val()) || 0;
+        const discountAmount = parseFloat($(this).val()) || 0;
+
+        if (purchaseRate > 0 && quantity > 0) {
+            const discountPercentage = calculateDiscountPercentage(purchaseRate, quantity, discountAmount);
+            row.find('input[name$="item_discount_percentage"]').val(discountPercentage.toFixed(2));
+        }
+    });
+
+    // Event listener for quantity change
+    $(document).on('input', 'input[name$="quantity"]', function () {
+        const row = $(this).closest('tr');
+        const purchaseRate = parseFloat(row.find('input[name$="purchase_rate"]').val()) || 0;
+        const quantity = parseInt($(this).val()) || 0;
+        const discountPercentage = parseFloat(row.find('input[name$="item_discount_percentage"]').val()) || 0;
+
+        if (purchaseRate > 0 && discountPercentage > 0) {
+            const discountAmount = calculateDiscountAmount(purchaseRate, quantity, discountPercentage);
+            row.find('input[name$="item_discount_amount"]').val(discountAmount.toFixed(2));
+        }
+    });
 });
 </script>
-
 
 <style>
 #hide-me {

@@ -6,6 +6,13 @@
 <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 {% endblock %}
 
+
+
+{% block title %}Purchase List{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Purchase List</h2>
 {% if messages %}
 <div class="container mt-3">
     {% for message in messages %}
@@ -17,11 +24,6 @@
 </div>
 {% endif %}
 
-{% block title %}Purchase List{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Purchase List</h2>
     <div class="text-right mb-3">
         <a href="{% url 'create_purchase' %}" class="btn btn-success">Purchase Entry</a>
     </div>

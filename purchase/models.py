@@ -45,6 +45,13 @@ class PurchaseItem(models.Model):
     item_discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
+    def save(self, *args, **kwargs):
+        if self.item_discount_percentage and not self.item_discount_amount:
+            self.item_discount_amount = (self.purchase_rate * self.quantity) * (self.item_discount_percentage / 100)
+        elif self.item_discount_amount and not self.item_discount_percentage:
+            self.item_discount_percentage = (self.item_discount_amount / (self.purchase_rate * self.quantity)) * 100
+        super().save(*args, **kwargs)
+
     def calculate_amount(self):
         discount_from_percentage = (self.purchase_rate * self.quantity) * (self.item_discount_percentage / 100)
         total_discount = discount_from_percentage + self.item_discount_amount
