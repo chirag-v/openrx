@@ -66,20 +66,56 @@ body {
     background-color: #c82333; /* Darker red on hover */
     border-color: #c82333; /* Darker border on hover */
 }
-}
+
 
 
 
 .footer {
-    background-color: #212529;
-    color: #f8f9fa;
-    margin-top: 3em;
+    background-color: #212529; /* Dark gray for footer background */
+    color: #ced4da; /* Light gray for text color */
+    margin-top: 3em; /* Space above the footer */
+    border-top: 1px solid #6c757d; /* Lighter gray border at the top */
+    padding: 1.5em 0; /* Padding for spacing inside the footer */
+    text-align: center; /* Center-aligns text within the footer */
 }
-
 
 .footer a {
-    color: #f8f9fa;
+    color: #ced4da; /* Consistent link color with footer text */
+    text-decoration: none; /* No underline for links */
+    transition: color 0.3s ease; /* Smooth transition for hover effect */;
+
 }
+
+.footer a:hover {
+    color: #adb5bd; /* Slightly lighter gray on hover for subtle effect */
+}
+
+.footer p, .footer span {
+    margin: 0; /* Remove default margins */
+    font-size: 0.9em; /* Font size adjustment for readability */
+    text-align: justify;
+}
+
+.footer .text-uppercase {
+    color: #f8f9fa; /* Bright white color for contrast */
+    font-weight: 600; /* Semi-bold for emphasis */
+    font-size: 1rem; /* Slightly larger font size */
+    letter-spacing: 0.05em; /* Adds spacing between letters for clarity */
+    margin-bottom: 1em; /* Space below titles for separation */
+    text-transform: uppercase; /* Ensure text is uppercase */
+    border-bottom: 2px solid #6c757d; /* Underline effect for titles */
+    padding-bottom: 0.3em; /* Padding below text for a neat look */
+    text-align: center; /* Center-aligns text titles the footer */
+}
+
+.footer .list-unstyled {
+    padding-left: 0; /* Remove default padding for list items */
+    list-style-type: none; /* Remove default list styling */
+    text-align: center; /* Center-aligns list items */
+}
+
+
+
 
 /* Styles for search form */
 .input-group {
@@ -413,4 +449,41 @@ input[type="number"] {
     background-color: #495057; /* Background for disabled state */
     color: #FFFFFF; /* White font color, dimmed for disabled state */
     opacity: 0.5; /* Lower opacity for disabled state */
+}
+
+
+.card {
+    background: linear-gradient(135deg, #074a8b, #1c1f23); /* Subtle gradient background */
+    border: 3px solid #fefefe; /* Primary blue border */
+    color: #f8f9fa; /* White text color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    border-radius: 12px; /* Rounded corners */
+    padding: 1.2rem; /* Spacing inside the card */
+}
+
+/* Title Styling */
+.card-title {
+    font-size: 2rem; /* Larger font size for the title */
+    margin-bottom: 0.1rem; /* Space below the title */
+    color: #fefeff; /* Blue color for title text */
+}
+
+/* Body Text Styling */
+.card-body {
+    font-size: 1.125rem; /* Slightly larger font size for content */
+    line-height: 1.6; /* Better readability */
+}
+
+/* Footer Button Styling */
+.card-footer .btn {
+    padding: 0.75rem 1.5rem; /* Padding for the button */
+    font-size: 1rem; /* Standard font size */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover Effects for Button */
+.card-footer .btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    color: #ffffff; /* White text on hover */
 }

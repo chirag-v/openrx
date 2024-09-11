@@ -1,3 +1,4 @@
+# item/urls.py
 from django.urls import path
 from .views import create_item, item_list, edit_item, delete_item, get_item_gst, get_items
 

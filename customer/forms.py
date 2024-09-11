@@ -1,3 +1,4 @@
+# customer/forms.py
 from django import forms
 from .models import Customer
 from gst.validators import gstin_validator

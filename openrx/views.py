@@ -1,3 +1,4 @@
+# openrx/views.py
 from django.apps import apps
 from django.shortcuts import render
 from django.urls import resolve, reverse

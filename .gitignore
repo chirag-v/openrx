@@ -21,4 +21,4 @@ Thumbs.db
 staticfiles/
 item_images/
 .idea/
-
+add_path_comment.py

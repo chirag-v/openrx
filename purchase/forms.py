@@ -1,5 +1,7 @@
+# purchase/forms.py
 from django import forms
 from .models import Purchase, PurchaseItem
+from supplier.models import Supplier
 
 
 class PurchaseForm(forms.ModelForm):
@@ -11,7 +13,8 @@ class PurchaseForm(forms.ModelForm):
             'purchase_type': forms.Select(attrs={'class': 'form-control'}),
             'invoice_date': forms.DateInput(attrs={'type': 'date'}),
             'invoice_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'invoice_discount': forms.NumberInput(attrs={'class': 'form-control'})
+            'invoice_discount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'expiry_date': forms.DateInput(attrs={'type': 'date'}),
 
         }
 

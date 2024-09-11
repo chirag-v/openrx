@@ -1,3 +1,4 @@
+# company/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Company, Division, MedicalRepresentative
 from .forms import CompanyForm, DivisionForm, MedicalRepresentativeForm  # Assuming you have a form for Company model

@@ -1,3 +1,4 @@
+# item/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ItemForm
 from .models import Item
@@ -56,8 +57,12 @@ def delete_item(request, pk):
 
 
 def get_item_gst(request, item_id):
-    item = Item.objects.get(id=item_id)
-    return JsonResponse({'gst': item.gst.percentage})
+    try:
+        item = Item.objects.get(id=item_id)
+        return JsonResponse({'gst': item.gst.percentage})
+    except Item.DoesNotExist:
+        return JsonResponse({'error': 'Item not found'}, status=404)
+
 
 
 def get_items(request):

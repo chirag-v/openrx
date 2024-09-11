@@ -1,3 +1,4 @@
+# company/urls.py
 # customer/urls.py
 from django.urls import path
 from .views import (company_list, add_company, edit_company, delete_company, division_list, division_edit,

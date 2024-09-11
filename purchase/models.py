@@ -1,7 +1,10 @@
+# purchase/models.py
 from django.db import models
 from django.core.validators import MinValueValidator
 from item.models import Item
 from supplier.models import Supplier
+from decimal import Decimal
+
 
 class Purchase(models.Model):
     PURCHASE_TYPE_CHOICES = [
@@ -46,7 +49,7 @@ class PurchaseItem(models.Model):
         discount_from_percentage = (self.purchase_rate * self.quantity) * (self.item_discount_percentage / 100)
         total_discount = discount_from_percentage + self.item_discount_amount
         discounted_amount = (self.purchase_rate * self.quantity) - total_discount
-        gst_amount = discounted_amount * (self.item.gst.percentage / 100)
+        gst_amount = discounted_amount * (Decimal(self.item.gst.percentage) / Decimal(100))
         self.amount = discounted_amount + gst_amount
         self.save()
 

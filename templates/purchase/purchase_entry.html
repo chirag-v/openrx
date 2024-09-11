@@ -3,9 +3,6 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/custom.css' %}">
-{% endblock %}
 
 {% block title %}Purchase Entry{% endblock %}
 
@@ -14,39 +11,50 @@
     <h2 class="text-center">Purchase Entry</h2>
     <form method="post" class="mt-3">
         {% csrf_token %}
-        
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="supplier-select" id="hide-me">Supplier</label>
-                {{ form.supplier_name|as_crispy_field }}
-                <div id="hide-me">
-                <select id="supplier-select">
-                    <!-- Options for suppliers will be populated by JavaScript -->
-                </select>
-           </div>
-            </div>
-            <div class="col-md-6">
-                <label for="supplier-gstin">Supplier GSTIN</label><br>
-                <input type="text" id="supplier-gstin" class="col-md-3" readonly>
-            </div>
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
         </div>
+        {% endif %}
 
-        <!-- Purchase Details -->
-        <div class="row mb-3">
-            <div class="col-md-3">
-                {{ form.purchase_type|as_crispy_field }}
-            </div>
-            <div class="col-md-3">
-                {{ form.invoice_number|as_crispy_field }}
-            </div>
-            <div class="col-md-3">
-                {{ form.invoice_date|as_crispy_field }}
-            </div>
-            <div class="col-md-3">
-                {{ form.invoice_discount|as_crispy_field }}
-            </div>
-        </div>
-        
+        <!-- Supplier Section -->
+ <div class="row mb-3">
+    <div class="col-md-6">
+        <label for="supplier-select" id="hide-me">Supplier</label>
+        {{ form.supplier_name|as_crispy_field }} <!-- Ensure this field exists -->
+    </div>
+    <div class="col-md-6">
+        <label for="supplier-gstin">Supplier GSTIN</label><br>
+        <input type="text" name="supplier_gstin" id="supplier-gstin" class="form-control" readonly>
+    </div>
+</div>
+
+<!-- Purchase Details -->
+<div class="row mb-3">
+    <div class="col-md-3">
+        {{ form.purchase_type|as_crispy_field }} <!-- Ensure this field exists -->
+    </div>
+    <div class="col-md-3">
+        {{ form.invoice_number|as_crispy_field }}
+    </div>
+    <div class="col-md-3">
+        {{ form.invoice_date|as_crispy_field }}
+    </div>
+    <div class="col-md-3">
+        {{ form.invoice_discount|as_crispy_field }}
+    </div>
+</div>
+
+
         <!-- Items Section -->
         <h3 class="mt-4">Items</h3>
         <div id="purchase-items">
@@ -68,21 +76,7 @@
                     </tr>
                 </thead>
                 <tbody class="no-label-in-table">
-                    {% for form in formset %}
-                    <tr>
-                        <td style="width:30%;">{{ form.item|as_crispy_field }}</td>
-                        <td style="width:7%;">{{ form.mrp|as_crispy_field }}</td>
-                        <td style="width:5%;">{{ form.quantity|as_crispy_field }}</td>
-                        <td style="width:5%;">{{ form.free|as_crispy_field }}</td>
-                        <td style="width:15%;">{{ form.batch_number|as_crispy_field }}</td>
-                        <td style="width:10%;">{{ form.expiry_date|as_crispy_field }}</td>
-                        <td style="width:7%;">{{ form.purchase_rate|as_crispy_field }}</td>
-                        <td style="width:5%;">{{ form.item_discount_percentage|as_crispy_field }}</td>
-                        <td style="width:7%;">{{ form.item_discount_amount|as_crispy_field }}</td>
-                        <td style="width:5%;"><input type="text" class="form-control gst-field" readonly></td>
-                        <td style="width:4%;"><button type="button" class="btn btn-danger remove-item">Remove</button></td>
-                    </tr>
-                    {% endfor %}
+                    <!-- Dynamic Lines -->
                 </tbody>
             </table>
         </div>
@@ -98,99 +92,138 @@ document.addEventListener('DOMContentLoaded', function () {
     const addItemButton = document.getElementById('add-item');
     const purchaseItemsContainer = document.getElementById('purchase-items');
     const totalForms = document.querySelector('#id_form-TOTAL_FORMS');
-    const formRegex = RegExp(`form-(\\d{1})-`, 'g');
 
-    function fetchItems() {
-        return fetch('/item/get_items/')
+    // Fetch items for the dropdowns
+    function fetchItems(callback) {
+        fetch('/item/get_items/')
             .then(response => response.json())
-            .then(data => data.items);
+            .then(data => {
+                callback(data.items);
+            });
     }
 
+    // Create options for item dropdown
     function createItemOptions(items) {
-        return items.map(item => `<option value="${item.id}">${item.name}</option>`).join('');
+        return `<option value="">Select an item</option>` + items.map(item => `<option value="${item.id}">${item.name}</option>`).join('');
     }
 
-    function addNewRow(items) {
+    // Add new item row
+    function addNewRow(items, isInitial = false) {
         const newForm = document.createElement('tr');
+        const rowIndex = totalForms.value;
+
         newForm.innerHTML = `
-            <td style="width:30%;"><div class="item"><select name="form-${totalForms.value}-item" class="form-control">${createItemOptions(items)}</select></div></td>
-            <td style="width:7%;"><input type="text" name="form-${totalForms.value}-mrp" class="form-control"></td>
-            <td style="width:5%;"><input type="text" name="form-${totalForms.value}-quantity" class="form-control"></td>
-            <td style="width:5%;"><input type="text" name="form-${totalForms.value}-free" class="form-control"></td>
-            <td style="width:15%;"><input type="text" name="form-${totalForms.value}-batch_number" class="form-control"></td>
-            <td style="width:10%;"><input type="text" name="form-${totalForms.value}-expiry_date" class="form-control"></td>
-            <td style="width:7%;"><input type="text" name="form-${totalForms.value}-purchase_rate" class="form-control"></td>
-            <td style="width:5%;"><input type="text" name="form-${totalForms.value}-item_discount_percentage" class="form-control"></td>
-            <td style="width:7%;"><input type="text" name="form-${totalForms.value}-item_discount_amount" class="form-control"></td>
-            <td style="width:5%;"><input type="text" class="form-control gst-field" readonly></td>
-            <td style="width:4%;"><button type="button" class="btn btn-danger remove-item">Remove</button></td>
+            <td style="width:30%;"><select name="form-${rowIndex}-item" class="form-control select2 item-select">${createItemOptions(items)}</select></td>
+            <td style="width:7%;"><input type="text" name="form-${rowIndex}-mrp" class="form-control"></td>
+            <td style="width:5%;"><input type="text" name="form-${rowIndex}-quantity" class="form-control"></td>
+            <td style="width:5%;"><input type="text" name="form-${rowIndex}-free" class="form-control"></td>
+            <td style="width:15%;"><input type="text" name="form-${rowIndex}-batch_number" class="form-control"></td>
+            <td style="width:10%;"><input type="text" name="form-${rowIndex}-expiry_date" class="form-control"></td>
+            <td style="width:7%;"><input type="text" name="form-${rowIndex}-purchase_rate" class="form-control"></td>
+            <td style="width:5%;"><input type="text" name="form-${rowIndex}-item_discount_percentage" class="form-control"></td>
+            <td style="width:7%;"><input type="text" name="form-${rowIndex}-item_discount_amount" class="form-control"></td>
+            <td style="width:5%;"><input type="text" name="form-${rowIndex}-gst" class="form-control gst-field" readonly></td>
+            <td style="width:4%;">
+                ${isInitial ? `<button type="button" class="btn btn-warning clear-item">Clear</button>` : `<button type="button" class="btn btn-danger remove-item">Remove</button>`}
+            </td>
         `;
         purchaseItemsContainer.querySelector('tbody').appendChild(newForm);
         totalForms.value = parseInt(totalForms.value) + 1;
+
+        // Apply Select2 to the new dropdown
+        applySelect2($(newForm).find('.select2'));
+
+        // Update buttons visibility
+        updateButtonsVisibility();
     }
 
-    fetchItems().then(items => {
-        // Initially add five new rows
-        for (let i = 0; i < 5; i++) {
-            addNewRow(items);
-        }
+    // Apply Select2 to elements
+    function applySelect2(element) {
+        element.select2();
+    }
 
-        addItemButton.addEventListener('click', function () {
+    // Bind change event using event delegation
+    $(purchaseItemsContainer).on('change', '.item-select', function () {
+        const gstField = $(this).closest('tr').find('.gst-field');
+        const itemId = $(this).val();
+
+        // Fetch GST value for selected item
+        fetch(`/item/get_item_gst/${itemId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    gstField.val('');
+                } else {
+                    gstField.val(data.gst);
+                }
+            })
+            .catch(error => console.error('Error fetching GST:', error));
+    });
+
+    // Handle add item button click
+    addItemButton.addEventListener('click', function () {
+        fetchItems(function(items) {
             addNewRow(items);
         });
     });
 
-    purchaseItemsContainer.addEventListener('change', function (event) {
-        if (event.target.name.includes('item')) {
-            const formIndex = event.target.name.match(/\d+/)[0];
-            const gstField = event.target.closest('tr').querySelector(`[name="form-${formIndex}-gst"]`);
-            const itemId = event.target.value;
-
-            fetch(`/item/get_item_gst/${itemId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    gstField.value = data.gst;
-                })
-                .catch(error => console.error('Error fetching GST:', error));
-        }
+    // Handle remove item button click
+    $(purchaseItemsContainer).on('click', '.remove-item', function () {
+        $(this).closest('tr').remove();
+        totalForms.value = purchaseItemsContainer.querySelectorAll('tbody tr').length;
+        updateButtonsVisibility();
     });
 
-    purchaseItemsContainer.addEventListener('click', function (event) {
-        if (event.target.classList.contains('remove-item')) {
-            event.target.closest('tr').remove();
-            const forms = purchaseItemsContainer.querySelectorAll('tbody tr');
-            totalForms.value = forms.length;
-            forms.forEach((form, index) => {
-                form.innerHTML = form.innerHTML.replace(formRegex, `form-${index}-`);
-            });
-        }
+    // Handle clear button click
+    $(purchaseItemsContainer).on('click', '.clear-item', function () {
+        $(this).closest('tr').find('input, select').val('');
+        $(this).closest('tr').find('.gst-field').val('');
     });
+
+    // Initialize with one line on page load
+    fetchItems(function(items) {
+        addNewRow(items, true);
+    });
+
+    // Update buttons visibility
+    function updateButtonsVisibility() {
+        const rows = purchaseItemsContainer.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            const actionCell = row.querySelector('td:last-child');
+            if (rows.length === 1) {
+                actionCell.innerHTML = `<button type="button" class="btn btn-warning clear-item">Clear</button>`;
+            } else {
+                actionCell.innerHTML = `<button type="button" class="btn btn-danger remove-item">Remove</button>`;
+            }
+        });
+    }
 
     // Handling supplier GSTIN
-    const supplierSelect = document.getElementById('supplier-select');
-    const supplierGstin = document.getElementById('supplier-gstin');
+    $('#supplier-select').on('change', function () {
+        const supplierId = $(this).val();
+        const supplierGstin = $('#supplier-gstin');
 
-    supplierSelect.addEventListener('change', function () {
-        const supplierId = this.value;
         if (supplierId) {
             fetch(`/supplier/get_gstin/${supplierId}/`)
                 .then(response => response.json())
                 .then(data => {
-                    supplierGstin.value = data.gstin;
+                    supplierGstin.val(data.gstin);
                 })
                 .catch(error => console.error('Error fetching GSTIN:', error));
         } else {
-            supplierGstin.value = ''; // Clear GSTIN if no supplier is selected
+            supplierGstin.val(''); // Clear GSTIN if no supplier is selected
         }
     });
 
+    // Apply Select2 to existing supplier select
+    $('#supplier-select').select2();
 });
 </script>
-    
-    <style>
 
+
+<style>
 #hide-me {
     display: none;
 }
-    </style>
+</style>
 {% endblock %}

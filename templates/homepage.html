@@ -21,17 +21,24 @@
                     </div>
                 </div>
             {% endfor %}
-        </div>
-            <div class="row">
-                <div class="col-auto col-md-auto">
-                    <div class="jumbotron py-4 px-5">
-                        <h3>"Future-Proof Your Pharmacy Business with OpenRx ERP"</h3>
-                        <div class="fs-5 justify-content-evenly">  {% include "whats_new.html" %} </div>
+            <div class="row justify-content-center my-5">
+                <div class="col-auto col-md-10">
+                    <div class="card bg-dark text-white py-5 px-4 border-3 border-primary shadow-lg">
+                        <!-- Title Section -->
+                        <div class="card-header bg-transparent border-0 text-center mb-3">
+                            <h2 class="card-title fw-bold text-info">
+                                Future-Proof Your Pharmacy Business with OpenRx ERP
+                            </h2>
+                        </div>
+                        <!-- Content Section -->
+                        <div class="card-body fs-5">
+                            {% include "whats_new.html" %}
+                        </div>
                     </div>
                 </div>
-        </div>
-    
-    </div>
+            </div>
+
+    </div> </div>
 </body>
 
 {% endblock %}

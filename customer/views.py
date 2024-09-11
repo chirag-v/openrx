@@ -1,3 +1,4 @@
+# customer/views.py
 from django.core.paginator import Paginator
 from django.db.models import Q, CharField, Case, When
 from django.shortcuts import render, redirect, get_object_or_404

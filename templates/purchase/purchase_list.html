@@ -6,13 +6,24 @@
 <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 {% endblock %}
 
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% block title %}Purchase List{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <h2 class="text-center">Purchase List</h2>
     <div class="text-right mb-3">
-        <a href="{% url 'add_purchase' %}" class="btn btn-primary">Add Purchase</a>
+        <a href="{% url 'create_purchase' %}" class="btn btn-success">Purchase Entry</a>
     </div>
     <table class="table table-dark table-striped table-hover shadow">
         <thead>
@@ -21,7 +32,7 @@
                 <th>Supplier Name</th>
                 <th>Purchase Type</th>
                 <th>Invoice Date</th>
-                <th>Gross Amount</th>
+                <th>Material Receipt</th>
                 <th>Invoice Discount</th>
                 <th>Net Amount</th>
                 <th>Actions</th>
@@ -32,14 +43,14 @@
             <tr>
                 <td>{{ purchase.invoice_number }}</td>
                 <td>{{ purchase.supplier_name }}</td>
-                <td>{{ purchase.purchase_type }}</td>
+                <td>{{ purchase.purchase_type | capfirst }}</td>
                 <td>{{ purchase.invoice_date }}</td>
-                <td>{{ purchase.gross_amount }}</td>
+                <td>MR{{ purchase.id }}</td>
                 <td>{{ purchase.invoice_discount }}</td>
                 <td>{{ purchase.net_amount }}</td>
                 <td>
-                    <a href="{% url 'edit_purchase' purchase.id %}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="{% url 'delete_purchase' purchase.id %}" class="btn btn-danger btn-sm">Delete</a>
+                     <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                     <a href="#" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
             {% endfor %}
