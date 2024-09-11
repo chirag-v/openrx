@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td style="width:5%;"><input type="text" name="form-${rowIndex}-quantity" class="form-control"></td>
             <td style="width:5%;"><input type="text" name="form-${rowIndex}-free" class="form-control"></td>
             <td style="width:15%;"><input type="text" name="form-${rowIndex}-batch_number" class="form-control"></td>
-            <td style="width:10%;"><input type="text" name="form-${rowIndex}-expiry_date" class="form-control"></td>
+            <td style="width:10%;"><input type="text" id="expiry_date" name="form-${rowIndex}-expiry_date" class="form-control expiry-date" placeholder="MM/YY" pattern="\\d{2}/\\d{2}" maxlength="5" required></td>
             <td style="width:7%;"><input type="text" name="form-${rowIndex}-purchase_rate" class="form-control"></td>
             <td style="width:5%;"><input type="text" name="form-${rowIndex}-item_discount_percentage" class="form-control"></td>
             <td style="width:7%;"><input type="text" name="form-${rowIndex}-item_discount_amount" class="form-control"></td>
@@ -136,11 +136,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update buttons visibility
         updateButtonsVisibility();
+
+        // Attach expiry date input listener
+        attachExpiryDateInputListener(newForm);
     }
 
     // Apply Select2 to elements
     function applySelect2(element) {
         element.select2();
+    }
+
+    // Attach expiry date input listener
+    function attachExpiryDateInputListener(container) {
+        const expiryDateInputs = container.querySelectorAll('input[name$="expiry_date"]');
+
+        expiryDateInputs.forEach(input => {
+            input.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+                if (value.length > 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                }
+                e.target.value = value;
+            });
+        });
     }
 
     // Bind change event using event delegation
@@ -267,7 +285,11 @@ document.addEventListener('DOMContentLoaded', function () {
             row.find('input[name$="item_discount_amount"]').val(discountAmount.toFixed(2));
         }
     });
+
+    // Attach expiry date input listener to all existing expiry date inputs
+    attachExpiryDateInputListener(document);
 });
+
 </script>
 
 <style>

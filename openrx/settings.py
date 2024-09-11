@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'gst.apps.GstConfig',
     'item.apps.ItemConfig',
-    'purchase.apps.PurchaseConfig'
+    'purchase.apps.PurchaseConfig',
+    "inventory.apps.InventoryConfig",
+    "sale.apps.SaleConfig"
 
 ]
 
