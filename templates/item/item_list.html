@@ -9,12 +9,13 @@
             <form method="get" action="" class="mb-4">
                 <div class="input-group">
                     <!-- Search Input -->
-                    <input type="text" class="form-control search-input" placeholder="Search items (both Medical & Non-medical (OTC)" name="search" value="{{ request.GET.search }}">
-                    
+                    <input type="text" class="form-control search-input" placeholder="Search all items" name="search" value="{{ request.GET.search }}">
+
                     <!-- Improved Search Button -->
                     <button class="btn btn-search" type="submit">
                         &#128269; <!-- Unicode for the search icon -->
                     </button>
+                    <a href="{% url 'create_item' %}" class="btn btn-success" style="margin-left: 1em">Add New Item</a>
                 </div>
             </form>
 
@@ -32,14 +33,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in items %}
+                        {% for item in page_obj %}
                         <tr>
                             <td>{{ item.sku }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.gst }}</td>
-                            <td>
+                            <td class="text-center align-middle">
                                 {% if item.item_type == 'medicine' %}
-                                    &#128138; 
+                                    &#128138;
                                 {% endif %}
                             </td>
                             <td>

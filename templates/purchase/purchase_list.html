@@ -24,9 +24,17 @@
 </div>
 {% endif %}
 
-    <div class="text-right mb-3">
-        <a href="{% url 'create_purchase' %}" class="btn btn-success">Purchase Entry</a>
-    </div>
+    <!-- Search form -->
+    <form method="get" action="" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control search-input" placeholder="Search purchases" name="search" value="{{ request.GET.search }}">
+            <button class="btn btn-search" type="submit">
+                &#128269; <!-- Unicode for the search icon -->
+            </button>
+            <a href="{% url 'create_purchase' %}" class="btn btn-success" style="margin-left: 1em">Purchase Entry</a>
+        </div>
+    </form>
+
     <table class="table table-dark table-striped table-hover shadow">
         <thead>
             <tr>
@@ -41,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for purchase in purchases %}
+            {% for purchase in page_obj %}
             <tr>
                 <td>{{ purchase.invoice_number }}</td>
                 <td>{{ purchase.supplier_name }}</td>
@@ -58,5 +66,28 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
+
+   <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a></li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Last</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
 {% endblock %}

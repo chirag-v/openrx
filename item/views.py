@@ -4,7 +4,7 @@ from .forms import ItemForm
 from .models import Item
 from django.http import JsonResponse
 from django.db.models import Q
-
+from django.core.paginator import Paginator
 
 
 def create_item(request):
@@ -15,7 +15,6 @@ def create_item(request):
             return redirect('item_list')
     else:
         form = ItemForm()
-
     return render(request, 'item/create_item.html', {'form': form})
 
 
@@ -27,10 +26,13 @@ def item_list(request):
             Q(sku__icontains=query)
         )
     else:
-        items = Item.objects.all()
+        items = Item.objects.all().order_by('-id')  # order by id to show the latest item first
+    paginator = Paginator(items, 10)  # Show 10 items per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
-        'items': items,
+        'page_obj': page_obj,
         'search_query': query,
     }
     return render(request, 'item/item_list.html', context)

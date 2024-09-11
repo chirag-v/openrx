@@ -1,9 +1,12 @@
 # purchase/views.py
+from django.db.models import Q, CharField
+from django.db.models.functions import Cast
 from django.shortcuts import render, redirect
 from django.forms import modelformset_factory
 from .models import Purchase, PurchaseItem
 from .forms import PurchaseForm, PurchaseItemForm
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 
 def create_purchase(request):
@@ -42,5 +45,21 @@ def create_purchase(request):
 
 
 def purchase_list(request):
-    purchases = Purchase.objects.all().order_by('-id')  # order by id to show the latest purchase first
-    return render(request, 'purchase/purchase_list.html', {'purchases': purchases})
+    search_query = request.GET.get('search', '')
+    if search_query:
+        purchases = Purchase.objects.annotate(
+            id_str=Cast('id',CharField())
+        ).filter(
+            Q(invoice_number__icontains=search_query) |
+            Q(id_str__icontains=search_query) |
+            Q(supplier_name__name__icontains=search_query)
+
+        ).order_by('-id')
+    else:
+        purchases = Purchase.objects.all().order_by('-id')  # order by id to show the latest purchase first
+
+    paginator = Paginator(purchases, 10)  # Show 10 purchases per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'purchase/purchase_list.html', {'page_obj': page_obj})
+
