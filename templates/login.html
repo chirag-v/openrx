@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/login.css' %}">
+<div class="container">
+    <div class="jumbotron bg-info-subtle text-dark rounded-4 align-middle text-center py-5">
+        <h1 class="display-4 animate-text">Welcome to OpenR<sub>x</sub> ERP</h1>
+        <p class="lead fs-5 fst-italic fw-bold animate-text">Please log in to continue</p>
+    </div>
+    <div class="row justify-content-center my-5">
+        <div class="col-md-6">
+            <div class="card bg-dark text-white py-5 px-4 border-3 border-primary shadow-lg">
+                <div class="card-header bg-transparent border-0 text-center mb-3">
+                    <h2 class="card-title fw-bold text-info">Login</h2>
+                </div>
+                <div class="card-body fs-5">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.username|as_crispy_field }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password|as_crispy_field }}
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 btn-lg">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

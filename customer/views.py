@@ -34,7 +34,12 @@ def customer_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'customer/customer_list.html', {'page_obj': page_obj, 'search_query': search_query})
+    return render(request, 'customer/customer_list.html',  {'page_obj': page_obj, 'search_query': search_query})
+
+
+customer_list.view_name = 'Customer List'
+customer_list.synonyms = ['List Customers', 'View Customers', 'Show Customers', 'Display Customers', 'List of Customers', 'View List of Customers', 'Show List of Customers', 'Display List of Customers', 'Delete Customer', 'Edit Customer', 'Search Customer', 'Search Customers', 'Find Customer', 'Find Customers', 'Search for Customer', 'Search for Customers', 'Find for Customer', 'Find for Customers', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List', 'Find Customer List', 'Find Customers List', 'Search for Customer List', 'Search for Customers List', 'Find for Customer List', 'Find for Customers List', 'Delete Customer List', 'Edit Customer List', 'Search Customer List', 'Search Customers List']
+
 
 def add_customer(request):
     if request.method == 'POST':
@@ -45,6 +50,10 @@ def add_customer(request):
     else:
         form = CustomerForm()
     return render(request, 'customer/add_customer.html', {'form': form})
+
+
+add_customer.view_name = 'Add New Customer'
+add_customer.synonyms = ['Add Customer', 'Create Customer', 'Add New Customer', 'Create New Customer']
 
 
 def edit_customer(request, id):

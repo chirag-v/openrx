@@ -17,6 +17,10 @@ def create_item(request):
         form = ItemForm()
     return render(request, 'item/create_item.html', {'form': form})
 
+create_item.view_name = 'Add New Item'
+create_item.synonyms = ['Add Product', 'Create Product', 'Add New Product', 'Create New Product',
+                        'Add Item', 'Create Item', 'Create New Item']
+
 
 def item_list(request):
     query = request.GET.get('search')
@@ -36,6 +40,11 @@ def item_list(request):
         'search_query': query,
     }
     return render(request, 'item/item_list.html', context)
+
+item_list.view_name = 'List of Items'
+item_list.synonyms = ['List Products', 'View Products', 'Show Products', 'Display Products', 'View List of Products',
+                      'Show List of Products', 'Display List of Products', 'View Items', 'Show Items',
+                      'Display Items', 'View List of Items', 'Show List of Items', 'Display List of Items']
 
 
 def edit_item(request, pk):
@@ -70,3 +79,8 @@ def get_item_gst(request, item_id):
 def get_items(request):
     items = Item.objects.all().values('id', 'name')
     return JsonResponse({'items': list(items)})
+
+get_items.view_name = 'Get Items (API)'
+get_items.synonyms = ['Get Products', 'Fetch Items', 'Get Items List', 'Fetch Products', 'Get Products List',
+                      'Fetch Items List', 'Get Products API', 'Fetch Items API', 'Get Items List API',
+                      'Fetch Products API', 'Get Products List API', 'Fetch Items List API']

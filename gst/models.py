@@ -1,6 +1,5 @@
 # gst/models.py
 from django.db import models
-from django.core.validators import RegexValidator
 
 class GST(models.Model):
     GST_RATES = [

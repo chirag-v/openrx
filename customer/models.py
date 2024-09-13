@@ -75,6 +75,15 @@ class Customer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='active')
 
+    # Add the __str__ method here to ensure it always returns a valid string
+    def __str__(self):
+        if self.name:
+            return f"{self.title or ''} {self.name} {self.surname or ''}".strip()
+        elif self.firm_name:
+            return self.firm_name
+        else:
+            return 'Unknown Customer'
+
 
     @property
     def required_fields(self):
@@ -102,7 +111,6 @@ class Customer(models.Model):
             }
             return category_discounts.get(self.category, 0)
         return 0
-
 
 
     def clean(self):
@@ -135,9 +143,6 @@ class Customer(models.Model):
     def some_other_static_method(code):
         state_name = get_state_name_by_code(code)
         return state_name
-
-    def __str__(self):
-        return self.name
 
 
     class Meta:

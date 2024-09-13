@@ -16,13 +16,13 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
                 <a class="navbar-brand text-body-emphasis" href={% url 'homepage' %}>
-    <img src="{% static 'logo/openrx-logo-small.png' %}" alt="OpenRx ERP" style="height: 50px; width: auto;">
-</a>
+                    <img src="{% static 'logo/openrx-logo-small.png' %}" alt="OpenRx ERP" style="height: 50px; width: auto;">
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav me-auto">
                         <!-- Customer Dropdown -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuCustomer" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -58,7 +58,7 @@
                                 <li><a class="dropdown-item" href="/company/add_medical_representative">Add a Medical Representative</a></li>
                             </ul>
                         </li>
-                        <!--Item Dropdown -->
+                        <!-- Item Dropdown -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuItem" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Item
@@ -67,6 +67,7 @@
                                 <li><a class="dropdown-item" href="/item/list">List Items</a></li>
                                 <li><a class="dropdown-item" href="/item/create">Add Items</a></li>
                             </ul>
+                        </li>
                         <!-- Purchase Dropdown -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuPurchase" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -76,7 +77,31 @@
                                 <li><a class="dropdown-item" href="/purchase/create">Purchase Entry</a></li>
                                 <li><a class="dropdown-item" href="/purchase/purchase_list">Purchase List</a></li>
                             </ul>
+                        </li>
+                        <!-- Sales Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuSales" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Sales
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuSales">
+                                <li><a class="dropdown-item" href="/sale/create">Sales Billing</a></li>
+                                <li><a class="dropdown-item" href="/sale/sale_list">View Sales Bill</a></li>
+                            </ul>
+                        </li>
                     </ul>
+                    {% if user.is_authenticated %}
+                    <form class="d-flex position-relative mx-auto" id="search-form" onsubmit="return false;">
+                        <input class="form-control me-2" type="search" placeholder="Search Options" aria-label="Search" name="q" id="search-input">
+                        <div class="dropdown-menu" id="search-results" style="display: none; position: absolute; top: 100%; left: 0; right: 0;">
+                            <!-- Search results will be appended here -->
+                        </div>
+                    </form>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                    {% endif %}
                 </div>
             </div>
         </nav>
@@ -95,16 +120,14 @@
                     <h5 class="text-uppercase">GNU General Public License v3 Notice</h5>
                     <p>
                         © 2024 OpenRxERP. This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
                     </p>
                 </div>
                 <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
                     <h5 class="text-uppercase">Links</h5>
                     <ul class="list-unstyled mb-0">
-                     <li><a href="https://openrxerp.com/" target="_blank" rel="noopener noreferrer">Official Documentation</a></li>
-                    <li><a href="https://github.com/chirag-v/openrx" target="_blank" rel="noopener noreferrer">OpenRx repo on GitHub</a></li>
-                    <li><a href="https://t.me/+0IGj5Yl_kaw4NTY1" target="_blank" rel="noopener noreferrer">Community on Telegram</a></li>
-
+                        <li><a href="https://openrxerp.com/" target="_blank" rel="noopener noreferrer">Official Documentation</a></li>
+                        <li><a href="https://github.com/chirag-v/openrx" target="_blank" rel="noopener noreferrer">OpenRx repo on GitHub</a></li>
+                        <li><a href="https://t.me/+0IGj5Yl_kaw4NTY1" target="_blank" rel="noopener noreferrer">Community on Telegram</a></li>
                     </ul>
                 </div>
             </div>
@@ -114,12 +137,76 @@
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
     <script src="{% static 'select2/js/select2.min.js' %}"></script>
     <script>
-            // Initialize Select2
-    $(document).ready(function() {
-        $('select').select2();
-    });
+        // Initialize Select2
+        $(document).ready(function() {
+            $('select').select2();
+        });
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value;
+            if (query.length > 2) {
+                fetch(`/search/?q=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const resultsDropdown = document.getElementById('search-results');
+                        resultsDropdown.innerHTML = '';
+                        if (data.results.length > 0) {
+                            data.results.forEach(result => {
+                                const item = document.createElement('a');
+                                item.className = 'dropdown-item';
+                                item.href = result.url;
+                                item.textContent = result.name;
+                                resultsDropdown.appendChild(item);
+                            });
+                            resultsDropdown.style.display = 'block';
+                        } else {
+                            resultsDropdown.style.display = 'none';
+                        }
+                    });
+            } else {
+                resultsDropdown.style.display = 'none';
+            }
+        });
+
+        // Handle arrow key navigation and selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            const resultsDropdown = document.getElementById('search-results');
+            let currentFocus = -1;
+
+            searchInput.addEventListener('keydown', function(e) {
+                const items = resultsDropdown.getElementsByClassName('dropdown-item');
+                if (e.key === 'ArrowDown') {
+                    currentFocus++;
+                    addActive(items);
+                } else if (e.key === 'ArrowUp') {
+                    currentFocus--;
+                    addActive(items);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                        if (items[currentFocus]) {
+                            window.location.href = items[currentFocus].href;
+                        }
+                    }
+                }
+            });
+
+            function addActive(items) {
+                if (!items) return false;
+                removeActive(items);
+                if (currentFocus >= items.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = items.length - 1;
+                items[currentFocus].classList.add('active');
+            }
+
+            function removeActive(items) {
+                for (let i = 0; i < items.length; i++) {
+                    items[i].classList.remove('active');
+                }
+            }
+        });
     </script>
-
-
 </body>
 </html>

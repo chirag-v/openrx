@@ -16,7 +16,6 @@ def get_divisions(request, company_id):
     return JsonResponse(formatted_divisions, safe=False)
 
 
-# Company List
 def company_list(request):
     search_query = request.GET.get('search', '')
     if search_query:
@@ -29,6 +28,11 @@ def company_list(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'company/company_list.html', {'page_obj': page_obj})
+
+
+company_list.view_name = 'List of Companies'
+company_list.synonyms = ['List Companies', 'View Companies', 'Show Companies', 'Display Companies', 'View List of Companies', 'Show List of Companies', 'Display List of Companies']
+
 # Company Create
 def add_company(request):
     if request.method == 'POST':
@@ -39,6 +43,9 @@ def add_company(request):
     else:
         form = CompanyForm()
     return render(request, 'company/add_company.html', {'form': form})
+add_company.view_name = 'Add New Company'
+add_company.synonyms = ['Add Company', 'Create Company', 'Add New Company', 'Create New Company']
+
 
 # Company Edit
 def edit_company(request, id):
@@ -121,6 +128,10 @@ def division_list(request):
 
     return render(request, 'divisions/division_list.html', {'page_obj': page_obj, 'search_query': search_query})
 
+division_list.view_name = 'List of Divisions'
+division_list.synonyms = ['List Divisions', 'View Divisions', 'Show Divisions', 'Display Divisions',
+                          'View List of Divisions', 'Show List of Divisions', 'Display List of Divisions']
+
 # Division Create
 def division_create(request):
     if request.method == 'POST':
@@ -131,6 +142,13 @@ def division_create(request):
     else:
         form = DivisionForm()
     return render(request, 'divisions/division_form.html', {'form': form})
+
+division_create.view_name = 'Create Division (of Company)'
+division_create.synonyms = ['Add Division', 'Create Division', 'Add New Division', 'Create New Division',
+                            'Add Division to Company', 'Create Division for Company', 'Add New Division to Company',
+                            'Create New Division for Company']
+
+
 # Division Edit
 def division_edit(request, pk):
     division = Division.objects.get(pk=pk)
@@ -162,6 +180,9 @@ def add_medical_representative(request):
     else:
         form = MedicalRepresentativeForm()
     return render(request, 'company/add_medical_representative.html', {'form': form})
+
+add_medical_representative.view_name = 'Add Medical Representative'
+add_medical_representative.synonyms = ['Add MR', 'Create MR', 'Add New MR', 'Create New MR', 'Add Medical Representative', 'Create Medical Representative', 'Add New Medical Representative', 'Create New Medical Representative']
 
 def edit_medical_representative(request, pk):
     representative = get_object_or_404(MedicalRepresentative, pk=pk)

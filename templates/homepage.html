@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 <body>
-{% block content %}  
+{% block content %}
     <div class="container">
         <div class="jumbotron bg-info-subtle text-dark rounded-4 align-middle text-center">
             <h1>Welcome to OpenR<sub>x</sub> ERP</h1>
@@ -15,7 +15,7 @@
                         <h3>{{ app.name }}</h3>
                         <ul>
                             {% for feature in app.features %}
-                                <li class="fs-4"><a href="{{ feature.url }}">{{ feature.name }}</a></li>
+                                <li class="fs-4 list list-group-flush bg-blue"><a href="{{ feature.url }}" class="text-info text-decoration-none">{{ feature.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>

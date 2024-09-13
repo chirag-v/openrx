@@ -28,6 +28,17 @@ def supplier_list(request):
     return render(request, 'supplier/supplier_list.html', {'page_obj': page_obj, 'search_query': search_query})
 
 
+supplier_list.view_name = 'List of Suppliers'
+supplier_list.synonyms = ['List Suppliers', 'View Suppliers', 'Show Suppliers', 'Display Suppliers',
+                            'Show List of Suppliers', 'Display List of Suppliers', 'View Vendors', 'Show Vendors',
+                            'Display Vendors', 'View List of Vendors', 'Show List of Vendors', 'Display List of Vendors',
+                            'View Sellers', 'Show Sellers', 'Display Sellers', 'View List of Sellers',
+                            'Display List of Sellers', 'View Stockists', 'Show Stockists', 'Display Stockists',
+                            'View List of Stockists', 'Show List of Stockists', 'Display List of Stockists',
+                            'View Distributors', 'Show Distributors', 'Display Distributors', 'Show Wholesalers',
+                            'Show List of Distributors', 'Display List of Distributors', 'View Wholesalers',
+                            'Display Wholesalers', 'View List of Wholesalers', 'Show List of Wholesalers']
+
 def add_supplier(request):
     if request.method == 'POST':
         form = SupplierForm(request.POST)
@@ -37,6 +48,15 @@ def add_supplier(request):
     else:
         form = SupplierForm()
     return render(request, 'supplier/add_supplier.html', {'form': form})
+
+
+add_supplier.view_name = 'Add New Supplier'
+add_supplier.synonyms = ['Add Supplier', 'Create Supplier', 'Add New Supplier', 'Create New Supplier', 'Add Vendor',
+                         'Create Vendor', 'Add New Vendor', 'Create New Vendor', 'Add Seller', 'Create Seller', 'Stockist',
+                         'Distributor', 'Wholesaler', 'Add Distributor', 'Create Distributor', 'Add New Distributor',
+                         'Create New Distributor', 'Add Wholesaler', 'Create Wholesaler', 'Add New Wholesaler',
+                         'Create New Wholesaler', 'Add Stockist', 'Create Stockist', 'Add New Stockist', 'Create New Stockist',
+                         'Add Seller', 'Create Seller', 'Add New Seller', 'Create New Seller']
 
 
 def edit_supplier(request, id):

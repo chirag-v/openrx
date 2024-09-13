@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block title %}Create Sale Invoice{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Sale Invoice</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.customer|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.sale_date|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.payment_method|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.gst|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.payment_status|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.bill_discount_percentage|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.line_discount_percentage|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    <!-- Display total_amount as a read-only field -->
+                    <input type="text" class="form-control" readonly value="{{ sale.total_amount }}" placeholder="Total Amount">
+                </div>
+                <div class="form-group">
+                    <!-- Display net_amount as a read-only field -->
+                    <input type="text" class="form-control" readonly value="{{ sale.net_amount }}" placeholder="Net Amount">
+                </div>
+            </div>
+        </div>
+
+        <h3>Sale Items</h3>
+        <div class="formset">
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="form-row">
+                    <div class="col-md-3">
+                        {{ form.item|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.quantity|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.selling_price|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.discount_percentage|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.amount|as_crispy_field }}
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger remove-form-row">Remove</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn btn-primary add-form-row">Add Item</button>
+        <button type="submit" class="btn btn-success">Save Sale</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // JavaScript to handle adding and removing form rows
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.add-form-row').addEventListener('click', function() {
+            var formset = document.querySelector('.formset');
+            var newForm = formset.querySelector('.form-row').cloneNode(true);
+            newForm.querySelectorAll('input').forEach(function(input) {
+                input.value = '';
+            });
+            formset.appendChild(newForm);
+        });
+
+        document.querySelector('.formset').addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-form-row')) {
+                event.target.closest('.form-row').remove();
+            }
+        });
+    });
+</script>
+{% endblock %}

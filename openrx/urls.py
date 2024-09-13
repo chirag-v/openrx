@@ -19,7 +19,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from openrx.views import homepage
+from openrx.views import homepage, login_view, logout_view, search_view
+
+search_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +32,11 @@ urlpatterns = [
     path('gst/', include('gst.urls')),
     path('item/', include('item.urls')),
     path('purchase/', include('purchase.urls')),
+    path('sale/', include('sale.urls')),
+    path('inventory/', include('inventory.urls')),
+    path('secure-gateway/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('search/', search_view, name='search'),
 
 ]
 

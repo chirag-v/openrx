@@ -3,16 +3,50 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-
-{% block title %}Purchase Entry{% endblock %}
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Purchase{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-5">
-    <h2 class="text-center">Purchase Entry</h2>
+    <h2 class="text-center">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Purchase</h2>
+
+    <!-- Display form errors -->
+    {% if form.errors %}
+      <div class="alert alert-danger alert-dismissible fade-show" role="alert">
+        <ul>
+          {% for field, errors in form.errors.items %}
+            <li>{{ field }}: {{ errors|join:", " }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <!-- Display formset errors -->
+    {% if formset.non_form_errors %}
+      <div class="alert alert-danger alert-dismissible fade-show" role="alert">
+        <ul>
+          {% for error in formset.non_form_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% for form in formset %}
+      {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade-show" role="alert">
+          <ul>
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors|join:", " }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endfor %}
+
     <form method="post" class="mt-3">
         {% csrf_token %}
         {% if form.errors %}
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible fade-show" role="alert">
             <ul>
                 {% for field in form %}
                     {% for error in field.errors %}
@@ -20,40 +54,39 @@
                     {% endfor %}
                 {% endfor %}
                 {% for error in form.non_field_errors %}
-                    <li>{{ error }}</li>
                 {% endfor %}
+                    <li>{{ error }}</li>
             </ul>
         </div>
         {% endif %}
 
         <!-- Supplier Section -->
- <div class="row mb-3">
-    <div class="col-md-6">
-        <label for="supplier-select" id="hide-me">Supplier</label>
-        {{ form.supplier_name|as_crispy_field }} <!-- Ensure this field exists -->
-    </div>
-    <div class="col-md-6">
-        <label for="supplier-gstin">Supplier GSTIN</label><br>
-        <input type="text" name="supplier_gstin" id="supplier-gstin" class="form-control" readonly>
-    </div>
-</div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="supplier-select" id="hide-me">Supplier</label>
+                {{ form.supplier_name|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                <label for="supplier-gstin">Supplier GSTIN</label><br>
+                <input type="text" name="supplier_gstin" id="supplier-gstin" class="form-control" readonly>
+            </div>
+        </div>
 
-<!-- Purchase Details -->
-<div class="row mb-3">
-    <div class="col-md-3">
-        {{ form.purchase_type|as_crispy_field }} <!-- Ensure this field exists -->
-    </div>
-    <div class="col-md-3">
-        {{ form.invoice_number|as_crispy_field }}
-    </div>
-    <div class="col-md-3">
-        {{ form.invoice_date|as_crispy_field }}
-    </div>
-    <div class="col-md-3">
-        {{ form.invoice_discount|as_crispy_field }}
-    </div>
-</div>
-
+        <!-- Purchase Details -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                {{ form.purchase_type|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                {{ form.invoice_number|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                {{ form.invoice_date|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                {{ form.invoice_discount|as_crispy_field }}
+            </div>
+        </div>
 
         <!-- Items Section -->
         <h3 class="mt-4">Items</h3>
@@ -82,12 +115,11 @@
         </div>
         <button type="button" class="btn btn-primary" id="add-item">Add Item</button>
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success btn-lg">Submit</button>
+            <button type="submit" class="btn btn-success btn-lg">{% if form.instance.pk %}Update{% else %}Submit{% endif %}</button>
         </div>
     </form>
 </div>
-    
-    
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const addItemButton = document.getElementById('add-item');
@@ -289,7 +321,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Attach expiry date input listener to all existing expiry date inputs
     attachExpiryDateInputListener(document);
 });
-
 </script>
 
 <style>
