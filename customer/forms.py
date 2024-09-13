@@ -55,7 +55,7 @@ class CustomerForm(forms.ModelForm):
             if firm_name:
                 self.add_error('firm_name', 'Firm name must be empty for B2C customers.')
         elif type == 'b2b':
-            if title in ['Mr', 'Mrs', 'Miss', 'Master', 'Adv', 'Dr', 'Prof']:
+            if title in ['Mr.', 'Mrs.', 'Miss', 'Master', 'Adv.', 'Dr.', 'Prof.']:
                 self.add_error('title', 'Title cannot be Mr, Mrs, Miss, Master, Adv, Dr, or Prof for B2B customers.')
             if not firm_name:
                 self.add_error('firm_name', 'Firm name is mandatory for B2B customers.')

@@ -34,17 +34,26 @@ company_list.view_name = 'List of Companies'
 company_list.synonyms = ['List Companies', 'View Companies', 'Show Companies', 'Display Companies', 'View List of Companies', 'Show List of Companies', 'Display List of Companies']
 
 # Company Create
-def add_company(request):
+# company/views.py
+
+def add_or_edit_company(request, id=None):
+    if id:
+        company = get_object_or_404(Company, pk=id)
+    else:
+        company = None
+
     if request.method == 'POST':
-        form = CompanyForm(request.POST)
+        form = CompanyForm(request.POST, instance=company)
         if form.is_valid():
             form.save()
             return redirect('company_list')
     else:
-        form = CompanyForm()
-    return render(request, 'company/add_company.html', {'form': form})
-add_company.view_name = 'Add New Company'
-add_company.synonyms = ['Add Company', 'Create Company', 'Add New Company', 'Create New Company']
+        form = CompanyForm(instance=company)
+
+    return render(request, 'company/add_company.html', {'form': form, 'is_edit': id is not None})
+
+add_or_edit_company.view_name = 'Add or Edit Company'
+add_or_edit_company.synonyms = ['Add Company', 'Edit Company', 'Create Company', 'Update Company']
 
 
 # Company Edit
@@ -57,7 +66,7 @@ def edit_company(request, id):
             return redirect('company_list')  # Redirect to the list of companies or appropriate page
     else:
         form = CompanyForm(instance=company)
-    return render(request, 'company/edit_company.html', {'form': form, 'company': company})
+    return render(request, 'company/add_company.html', {'form': form, 'company': company})
 
 
 # Company Delete
@@ -171,18 +180,23 @@ def division_delete(request, pk):
     return render(request, 'divisions/division_delete.html', context)
 
 # Medical Representative Views
-def add_medical_representative(request):
+def add_or_edit_medical_representative(request, id=None):
+    if id:
+        representative = get_object_or_404(MedicalRepresentative, pk=id)
+    else:
+        representative = None
+
     if request.method == 'POST':
-        form = MedicalRepresentativeForm(request.POST)
+        form = MedicalRepresentativeForm(request.POST, instance=representative)
         if form.is_valid():
             form.save()
-            return redirect('company_list')  # Redirect to a new URL
+            return redirect('list_medical_representatives')
     else:
-        form = MedicalRepresentativeForm()
-    return render(request, 'company/add_medical_representative.html', {'form': form})
+        form = MedicalRepresentativeForm(instance=representative)
 
-add_medical_representative.view_name = 'Add Medical Representative'
-add_medical_representative.synonyms = ['Add MR', 'Create MR', 'Add New MR', 'Create New MR', 'Add Medical Representative', 'Create Medical Representative', 'Add New Medical Representative', 'Create New Medical Representative']
+    return render(request, 'company/add_medical_representative.html', {'form': form, 'is_edit': id is not None})
+add_or_edit_medical_representative.view_name = 'Add Medical Representative'
+add_or_edit_medical_representative.synonyms = ['Add MR', 'Create MR', 'Add New MR', 'Create New MR', 'Add Medical Representative', 'Create Medical Representative', 'Add New Medical Representative', 'Create New Medical Representative']
 
 def edit_medical_representative(request, pk):
     representative = get_object_or_404(MedicalRepresentative, pk=pk)
@@ -190,7 +204,24 @@ def edit_medical_representative(request, pk):
         form = MedicalRepresentativeForm(request.POST, instance=representative)
         if form.is_valid():
             form.save()
-            return redirect('add_company')  # Redirect to a new URL
+            return redirect('list_medical_representatives')  # Redirect to a new URL
     else:
         form = MedicalRepresentativeForm(instance=representative)
-    return render(request, 'company/edit_medical_representative.html', {'form': form, 'representative': representative})
+    return render(request, 'company/add_medical_representative.html', {'form': form, 'representative': representative})
+
+
+def list_medical_representatives(request):
+    representatives = MedicalRepresentative.objects.all()
+    return render(request, 'company/list_medical_representatives.html', {'representatives': representatives})
+
+list_medical_representatives.view_name = 'List of Medical Representatives'
+list_medical_representatives.synonyms = ['List MRs', 'View MRs', 'Show MRs', 'Display MRs', 'View List of MRs',
+                                         'Show List of MRs', 'Display List of MRs']
+
+def delete_medical_representative(request, pk):
+    representative = get_object_or_404(MedicalRepresentative, pk=pk)
+    if request.method == 'POST':
+        representative.delete()
+        return redirect('list_medical_representatives')
+    return render(request, 'company/delete_medical_representative.html', {'representative': representative})
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Delete Medical Representative</h2>
+    <p class="text-center">Are you sure you want to delete {{ representative.name }}?</p>
+    <form method="post" class="text-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'list_medical_representatives' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -21,6 +21,7 @@ from django.contrib import admin
 from django.urls import path, include
 from openrx.views import homepage, login_view, logout_view, search_view
 
+
 search_view
 
 urlpatterns = [
@@ -41,7 +42,7 @@ urlpatterns = [
 ]
 
 
-
+# Remove or comment out this block in production
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

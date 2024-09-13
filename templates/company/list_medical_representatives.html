@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}List of Medical Representatives{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">List of Medical Representatives</h2>
+
+            <!-- Search form -->
+            <form method="get" action="" class="mb-4">
+                <div class="input-group">
+                    <!-- Search Input -->
+                    <input type="text" class="form-control search-input" placeholder="Search representatives" name="search" value="{{ request.GET.search }}">
+
+                    <!-- Improved Search Button -->
+                    <button class="btn btn-search" type="submit">
+                        &#128269; <!-- Unicode for the search icon -->
+                    </button>
+                    <a href="{% url 'add_medical_representative' %}" class="btn btn-success" style="margin-left: 1em">Add New Representative</a>
+                </div>
+            </form>
+
+            <!-- Table for listing representatives -->
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover shadow">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Mobile Number</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for representative in representatives %}
+                            <tr>
+                                <td>{{ representative.name }}</td>
+                                <td>{{ representative.mobile_number }}</td>
+                                <td>
+                                    <a href="{% url 'edit_medical_representative' representative.id %}" class="btn btn-sm btn-primary mx-1">Edit</a>
+                                    <a href="{% url 'delete_medical_representative' representative.id %}" class="btn btn-sm btn-danger mx-1">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a></li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Last</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
