@@ -29,6 +29,7 @@ class DivisionForm(forms.ModelForm):
         fields = ['name', 'company', 'suppliers', 'medical_representative']
 
 
+
 class MedicalRepresentativeForm(forms.ModelForm):
     class Meta:
         model = MedicalRepresentative
@@ -48,7 +49,8 @@ class MedicalRepresentativeForm(forms.ModelForm):
             mobile_validator(mobile_number)
         except ValidationError as e:
             self.add_error('mobile_number', e)
-        if not division and not company:
-            raise forms.ValidationError("A Medical Representative must belong to either a division or a company.")
+
+        if not company and not division:
+            raise forms.ValidationError("A Medical Representative must belong to either a company or a division.")
 
         return cleaned_data

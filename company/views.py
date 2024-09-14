@@ -6,6 +6,7 @@ from .forms import CompanyForm, DivisionForm, MedicalRepresentativeForm  # Assum
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
 from .mr_transfer import transfer_medical_representative, logger
+import logging
 
 
 def get_divisions(request, company_id):
@@ -179,9 +180,8 @@ def division_delete(request, pk):
     context = {'division': division, 'company': division.company}
     return render(request, 'divisions/division_delete.html', context)
 
-# Medical Representative Views
-# company/views.py
-from django.shortcuts import redirect
+
+logger = logging.getLogger(__name__)
 
 def add_or_edit_medical_representative(request, pk=None):
     if pk:
@@ -194,8 +194,15 @@ def add_or_edit_medical_representative(request, pk=None):
     if request.method == 'POST':
         form = MedicalRepresentativeForm(request.POST, instance=representative)
         if form.is_valid():
-            form.save()
+            representative = form.save(commit=False)
+            if form.cleaned_data['division']:
+                representative.company = form.cleaned_data['division'].company
+            else:
+                representative.company = form.cleaned_data['company']
+            representative.save()
             return redirect('list_medical_representatives')  # Redirect to the list view
+        else:
+            logger.error(f"Form errors: {form.errors}")
     else:
         form = MedicalRepresentativeForm(instance=representative)
 
@@ -203,9 +210,6 @@ def add_or_edit_medical_representative(request, pk=None):
         'form': form,
         'is_edit': is_edit
     })
-
-
-    return render(request, 'company/add_medical_representative.html', {'form': form, 'is_edit': id is not None})
 
 
 add_or_edit_medical_representative.view_name = 'Add Medical Representative'

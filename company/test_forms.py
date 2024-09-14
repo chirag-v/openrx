@@ -2,7 +2,8 @@
 
 import pytest
 from company.forms import CompanyForm, MedicalRepresentativeForm
-from company.models import Supplier
+from company.models import Supplier, Company, Division
+
 
 @pytest.mark.django_db
 def test_company_form_valid_data():
@@ -32,9 +33,14 @@ def test_company_form_invalid_data():
 
 @pytest.mark.django_db
 def test_medical_representative_form_valid_data():
+    company = Company.objects.create(name='Sigma Labs')
+    division = Division.objects.create(name='Derma', company=company)
+
     form_data = {
-        'name': 'John Doe',
-        'mobile_number': '9876543210'
+        'name': 'Sanjay Sharma',
+        'mobile_number': '9876543210',
+        'company': company.id,
+        'division': division.id
     }
     form = MedicalRepresentativeForm(data=form_data)
     assert form.is_valid(), f"Form errors: {form.errors}"

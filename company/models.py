@@ -35,11 +35,11 @@ class MedicalRepresentative(models.Model):
     division = models.ForeignKey(Division, null=True, blank=True, on_delete=models.SET_NULL, related_name='medical_representatives')
     mobile_number = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{10}$')])
 
+
     def clean(self):
         if not self.company and not self.division:
             raise ValidationError('A Medical Representative must belong to either a company or a division.')
-        if self.company and self.division:
-            raise ValidationError('A Medical Representative cannot belong to both a company and a division.')
+
 
     def __str__(self):
         return self.name
