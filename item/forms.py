@@ -1,44 +1,40 @@
-# item/forms.py
-from django import forms
-from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+from django.forms import ModelForm, RadioSelect, TextInput, FileInput, DateInput, CheckboxInput, Select, NumberInput
 
-from gst.models import GST
-from .models import Item
 from company.models import Company, Division
+from gst.models import GST
+from item.models import Item
 
 
-class ItemForm(forms.ModelForm):
+class ItemForm(ModelForm):
     class Meta:
         model = Item
         fields = ['name', 'item_type', 'sku', 'image', 'sold_loose', 'sold_online', 'mrp', 'purchase_price',
                   'selling_price', 'landing_cost', 'use', 'weight', 'company', 'division', 'dosage_form', 'packing',
                   'strength', 'batch_number', 'expiry_date', 'prescription_required', 'gst', 'hsn']
         widgets = {
-            'item_type': forms.RadioSelect(attrs={'class': 'type-radio'}, choices=Item.ITEM_TYPE_CHOICES),
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'sku': forms.TextInput(attrs={'class': 'form-control'}),
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
-            'mrp': forms.NumberInput(attrs={'class': 'form-control'}),
-            'purchase_price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'selling_price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'landing_cost': forms.NumberInput(attrs={'class': 'form-control'}),
-            'use': forms.TextInput(attrs={'class': 'form-control'}),
-            'weight': forms.NumberInput(attrs={'class': 'form-control'}),
-            'sold_loose': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'sold_online': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'dosage_form': forms.TextInput(attrs={'class': 'form-control'}),
-            'packing': forms.TextInput(attrs={'class': 'form-control'}),
-            'strength': forms.TextInput(attrs={'class': 'form-control'}),
-            'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'expiry_date': forms.DateInput(attrs={'class': 'form-control'}),
-            'prescription_required': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'gst': forms.Select(attrs={'class': 'form-control'}, choices=[(gst.id, f"{gst.percentage}%") for gst
-                                                                          in GST.objects.all()]),
-            'company': forms.Select(attrs={'class': 'form-control', 'data-url': '/company/get-divisions/'}),
-            'division': forms.Select(attrs={'class': 'form-control'}),
-            'hsn': forms.TextInput(attrs={'class': 'form-control'}),
+            'item_type': RadioSelect(attrs={'class': 'type-radio'}, choices=Item.ITEM_TYPE_CHOICES),
+            'name': TextInput(attrs={'class': 'form-control'}),
+            'sku': TextInput(attrs={'class': 'form-control'}),
+            'image': FileInput(attrs={'class': 'form-control'}),
+            'mrp': NumberInput(attrs={'class': 'form-control'}),
+            'purchase_price': NumberInput(attrs={'class': 'form-control'}),
+            'selling_price': NumberInput(attrs={'class': 'form-control'}),
+            'landing_cost': NumberInput(attrs={'class': 'form-control'}),
+            'use': TextInput(attrs={'class': 'form-control'}),
+            'weight': NumberInput(attrs={'class': 'form-control'}),
+            'sold_loose': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'sold_online': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'dosage_form': TextInput(attrs={'class': 'form-control'}),
+            'packing': TextInput(attrs={'class': 'form-control'}),
+            'strength': TextInput(attrs={'class': 'form-control'}),
+            'batch_number': TextInput(attrs={'class': 'form-control'}),
+            'expiry_date': DateInput(attrs={'class': 'form-control'}),
+            'prescription_required': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'company': Select(attrs={'class': 'form-control', 'data-url': '/company/get-divisions/'}),
+            'division': Select(attrs={'class': 'form-control'}),
+            'hsn': TextInput(attrs={'class': 'form-control'}),
         }
-
 
         labels = {
             'name': 'Item Name',
@@ -68,7 +64,21 @@ class ItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
+            # Dynamically set choices for the 'gst' field in the __init__ method
+            self.fields['gst'].choices = [(gst.id, f"{gst.percentage}%") for gst in GST.objects.all()]
+
+            # Dynamically set choices for the 'company' and 'division' fields in the __init__ method
+            self.fields['company'].choices = [(company.id, company.name) for company in Company.objects.all()]
+            self.fields['division'].choices = [(division.id, division.name) for division in Division.objects.all()]
+
+            # Set default value for the 'gst' field
             default_gst = GST.objects.get(percentage=12.0)
             self.fields['gst'].initial = default_gst.id
         except GST.DoesNotExist:
             pass
+
+    def clean_weight(self):
+        weight = self.cleaned_data.get('weight')
+        if weight is not None and weight < 0:
+            raise ValidationError('Weight must be a positive number.')
+        return weight
