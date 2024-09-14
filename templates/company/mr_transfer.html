@@ -1,0 +1,102 @@
+<!-- company/templates/company/mr_transfer.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Transfer Medical Representative</h2>
+    <form method="post" action="{% url 'mr_transfer' %}">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="med_rep_id" class="form-label">Select Medical Representative:</label>
+                <select id="med_rep_id" name="med_rep_id" class="form-select" required onchange="fetchMedRepInfo(this.value)">
+                    <option value="">Select</option>
+                    {% for med_rep in medical_representatives %}
+                    <option value="{{ med_rep.id }}">{{ med_rep.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="leaving_company" class="form-label">Leaving Company:</label>
+                <input type="text" id="leaving_company" name="leaving_company" class="form-control" readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="leaving_division" class="form-label">Leaving Division:</label>
+                <input type="text" id="leaving_division" name="leaving_division" class="form-control" readonly>
+                <input type="hidden" id="leaving_division_id" name="leaving_division_id">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="joining_company_id" class="form-label">Joining Company:</label>
+                <select id="joining_company_id" name="joining_company_id" class="form-select" required onchange="fetchDivisions(this.value)">
+                    <option value="">Select</option>
+                    {% for company in companies %}
+                    <option value="{{ company.id }}">{{ company.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="joining_division_id" class="form-label">Joining Division:</label>
+                <select id="joining_division_id" name="joining_division_id" class="form-select">
+                    <option value="">Select a company first</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Transfer</button>
+    </form>
+
+    {% if error_message %}
+    <div class="alert alert-danger mt-3">{{ error_message }}</div>
+    {% endif %}
+</div>
+
+<script>
+    function fetchMedRepInfo(medRepId) {
+        if (medRepId) {
+            fetch(`/company/get_med_rep_info/?med_rep_id=${medRepId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('leaving_company').value = data.company;
+                    document.getElementById('leaving_division').value = data.division;
+                    document.getElementById('leaving_division_id').value = data.division_id;
+                });
+        } else {
+            document.getElementById('leaving_company').value = '';
+            document.getElementById('leaving_division').value = '';
+            document.getElementById('leaving_division_id').value = '';
+        }
+    }
+
+    function fetchDivisions(companyId) {
+        if (companyId) {
+            fetch(`/company/get_divisions/${companyId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const divisionSelect = document.getElementById('joining_division_id');
+                    divisionSelect.innerHTML = '';
+                    if (data.divisions.length > 0) {
+                        data.divisions.forEach(division => {
+                            const option = document.createElement('option');
+                            option.value = division.id;
+                            option.textContent = division.name;
+                            divisionSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.textContent = 'Selected company has no division';
+                        divisionSelect.appendChild(option);
+                    }
+                });
+        } else {
+            const divisionSelect = document.getElementById('joining_division_id');
+            divisionSelect.innerHTML = '<option value="">Select a company first</option>';
+        }
+    }
+</script>
+{% endblock %}

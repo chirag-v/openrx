@@ -1,42 +1,43 @@
 # company/mr_transfer.py
-''' this is a function that can be used to transfer a medical
- representative from one division to another division
+import logging
+from .models import MedicalRepresentative, Division, Company
 
- 1. The function takes in the id of the medical representative to be transferred, the id of the division the
- representative is leaving, and the id of the division the representative is joining.
- 2. The function fetches the medical representative object using the id provided.
- 3. The function fetches the division the representative is leaving using the id provided.
- 4. The function updates the medical representative field of the division the representative is leaving to None or to
-  another representative.
- 5. If the id of the division the representative is joining is provided, the function fetches the division the
- representative is joining using the id provided.
- 6. The function updates the medical representative field of the division the representative is joining to the medical
- representative object fetched in step 2.
- 7. The function saves the changes made to the divisions.
- 8. The function does not return any value.
- 9. The function can be called to transfer a medical representative from one division to another by providing the
- necessary ids as arguments.
- 10. The function can be used in a Django application that has models for Division and MedicalRepresentative as shown
- in the code snippet.
-    Example usage: transfer_medical_representative(1, 2, 3)
-    where 1 is the id of the medical representative, 2 is the id of the division the representative is leaving, and 3
-    is the id of the division the representative is joining.
+logger = logging.getLogger(__name__)
 
- '''
+def transfer_medical_representative(med_rep_id, leaving_division_id=None, joining_division_id=None, joining_company_id=None):
+    try:
+        med_rep = MedicalRepresentative.objects.get(id=med_rep_id)
 
-from .models import Division, MedicalRepresentative
+        if leaving_division_id:
+            leaving_division = Division.objects.get(id=leaving_division_id)
+            if med_rep.division != leaving_division:
+                raise ValueError("The Medical Representative does not belong to the specified leaving division.")
+        else:
+            if med_rep.division:
+                raise ValueError("The Medical Representative belongs to a division, but no leaving division was specified.")
 
+        if joining_division_id and joining_division_id != 'Selected company has no division':
+            joining_division = Division.objects.get(id=joining_division_id)
+            med_rep.division = joining_division
+            med_rep.company = joining_division.company
+        elif joining_company_id:
+            joining_company = Company.objects.get(id=joining_company_id)
+            med_rep.company = joining_company
+            med_rep.division = None
+        else:
+            raise ValueError("Either joining_division_id or joining_company_id must be provided.")
 
-def transfer_medical_representative(med_rep_id, leaving_division_id, joining_division_id=None):
-    med_rep = MedicalRepresentative.objects.get(id=med_rep_id)
-
-    # Update the division the representative is leaving
-    leaving_division = Division.objects.get(id=leaving_division_id)
-    leaving_division.medical_representative = None  # Or set to a new representative
-    leaving_division.save()
-
-    # If joining a new division
-    if joining_division_id:
-        joining_division = Division.objects.get(id=joining_division_id)
-        joining_division.medical_representative = med_rep
-        joining_division.save()
+        med_rep.save()
+        return True
+    except MedicalRepresentative.DoesNotExist:
+        logger.error(f"MedicalRepresentative with id {med_rep_id} does not exist.")
+        return False
+    except Division.DoesNotExist:
+        logger.error(f"Division with id {leaving_division_id} or {joining_division_id} does not exist.")
+        return False
+    except Company.DoesNotExist:
+        logger.error(f"Company with id {joining_company_id} does not exist.")
+        return False
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        return False

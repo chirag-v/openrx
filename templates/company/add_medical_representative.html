@@ -16,10 +16,33 @@
                 <label for="mobile_number" class="form-label">Mobile Number</label>
                 <input type="text" class="form-control {% if form.mobile_number.errors %}is-invalid{% endif %}" id="mobile_number" name="mobile_number" value="{{ form.mobile_number.value | default_if_none:'' }}" required>
                 {% for error in form.mobile_number.errors %}
-                    <div class="invalid-feedback">
-                        {{ error }}
-                    </div>
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
                 {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Company field -->
+            <div class="col-md-6 mb-3">
+                <label for="company" class="form-label">Company</label>
+                <select class="form-select" id="company" name="company" onchange="fetchDivisions(this.value)">
+                    <option value="">Select Company</option>
+                    {% for company in form.company.field.queryset %}
+                    <option value="{{ company.id }}" {% if company.id == form.company.value %}selected{% endif %}>{{ company.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Division field -->
+            <div class="col-md-6 mb-3">
+                <label for="division" class="form-label">Division</label>
+                <select class="form-select" id="division" name="division">
+                    <option value="">Select Division</option>
+                    {% for division in form.division.field.queryset %}
+                    <option value="{{ division.id }}" {% if division.id == form.division.value %}selected{% endif %}>{{ division.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
 
@@ -30,4 +53,30 @@
         </div>
     </form>
 </div>
+
+<script>
+    function fetchDivisions(companyId) {
+        const divisionSelect = document.getElementById('division');
+        divisionSelect.innerHTML = '<option value="">Select Division</option>';
+
+        if (companyId) {
+            fetch(`/company/get_divisions/${companyId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.divisions.length > 0) {
+                        data.divisions.forEach(division => {
+                            const option = document.createElement('option');
+                            option.value = division.id;
+                            option.textContent = division.name;
+                            divisionSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.textContent = 'This company has no division';
+                        divisionSelect.appendChild(option);
+                    }
+                });
+        }
+    }
+</script>
 {% endblock %}

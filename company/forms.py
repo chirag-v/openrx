@@ -13,14 +13,15 @@ class CompanyForm(forms.ModelForm):
             'supplier': forms.CheckboxSelectMultiple(),
             'medical_representative': forms.Select(),
         }
-        help_texts ={
+        help_texts = {
             'medical_representative': 'Select the current medical representative appointed for this company',
         }
-        labels={
+        labels = {
             'name': 'Company Name',
             'suppliers': 'Suppliers',
             'medical_representative': 'Medical Representative',
         }
+
 
 class DivisionForm(forms.ModelForm):
     class Meta:
@@ -28,24 +29,26 @@ class DivisionForm(forms.ModelForm):
         fields = ['name', 'company', 'suppliers', 'medical_representative']
 
 
-
-
 class MedicalRepresentativeForm(forms.ModelForm):
     class Meta:
         model = MedicalRepresentative
-        fields = ['name', 'mobile_number']
+        fields = ['name', 'mobile_number', 'company', 'division']
 
     def clean(self):
         cleaned_data = super().clean()
         mobile_number = cleaned_data.get("mobile_number")
+        company = cleaned_data.get("company")
+        division = cleaned_data.get("division")
 
         # Define the regex validator for the mobile number
         mobile_validator = RegexValidator(regex=r'^\d{10}$',
-                       message="Mobile number must be exactly 10 digits.")
+                                          message="Mobile number must be exactly 10 digits.")
         # Validate the mobile number
         try:
             mobile_validator(mobile_number)
         except ValidationError as e:
             self.add_error('mobile_number', e)
+        if not division and not company:
+            raise forms.ValidationError("A Medical Representative must belong to either a division or a company.")
 
         return cleaned_data

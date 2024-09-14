@@ -1,19 +1,19 @@
 # company/views.py
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Company, Division, MedicalRepresentative
 from .forms import CompanyForm, DivisionForm, MedicalRepresentativeForm  # Assuming you have a form for Company model
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
-from django.http import JsonResponse
+from .mr_transfer import transfer_medical_representative, logger
 
 
 def get_divisions(request, company_id):
-    divisions = Division.objects.filter(company_id=company_id).values('id', 'name', 'company__name')
-    formatted_divisions = [
-        {"id": division["id"], "name": f"({division['company__name']}) - {division['name']}"}
-        for division in divisions
-    ]
-    return JsonResponse(formatted_divisions, safe=False)
+    divisions = Division.objects.filter(company_id=company_id)
+    data = {
+        'divisions': [{'id': division.id, 'name': division.name} for division in divisions]
+    }
+    return JsonResponse(data)
 
 
 def company_list(request):
@@ -21,7 +21,7 @@ def company_list(request):
     if search_query:
         companies = Company.objects.filter(name__icontains=search_query)
     else:
-        companies = Company.objects.all()
+        companies = Company.objects.all().order_by('-id') # Latest companies first
 
     paginator = Paginator(companies, 10)  # Show 10 companies per page.
     page_number = request.GET.get('page')
@@ -180,21 +180,34 @@ def division_delete(request, pk):
     return render(request, 'divisions/division_delete.html', context)
 
 # Medical Representative Views
-def add_or_edit_medical_representative(request, id=None):
-    if id:
-        representative = get_object_or_404(MedicalRepresentative, pk=id)
+# company/views.py
+from django.shortcuts import redirect
+
+def add_or_edit_medical_representative(request, pk=None):
+    if pk:
+        representative = get_object_or_404(MedicalRepresentative, pk=pk)
+        is_edit = True
     else:
-        representative = None
+        representative = MedicalRepresentative()
+        is_edit = False
 
     if request.method == 'POST':
         form = MedicalRepresentativeForm(request.POST, instance=representative)
         if form.is_valid():
             form.save()
-            return redirect('list_medical_representatives')
+            return redirect('list_medical_representatives')  # Redirect to the list view
     else:
         form = MedicalRepresentativeForm(instance=representative)
 
+    return render(request, 'company/add_medical_representative.html', {
+        'form': form,
+        'is_edit': is_edit
+    })
+
+
     return render(request, 'company/add_medical_representative.html', {'form': form, 'is_edit': id is not None})
+
+
 add_or_edit_medical_representative.view_name = 'Add Medical Representative'
 add_or_edit_medical_representative.synonyms = ['Add MR', 'Create MR', 'Add New MR', 'Create New MR', 'Add Medical Representative', 'Create Medical Representative', 'Add New Medical Representative', 'Create New Medical Representative']
 
@@ -225,3 +238,60 @@ def delete_medical_representative(request, pk):
         return redirect('list_medical_representatives')
     return render(request, 'company/delete_medical_representative.html', {'representative': representative})
 
+
+
+def get_med_rep_info(request):
+    med_rep_id = request.GET.get('med_rep_id')
+    med_rep = MedicalRepresentative.objects.get(id=med_rep_id)
+
+    if med_rep.division:
+        company_name = med_rep.division.company.name
+        division_name = med_rep.division.name
+        division_id = med_rep.division.id
+    else:
+        company_name = med_rep.company.name if med_rep.company else 'N/A'
+        division_name = 'This company has no division'
+        division_id = ''
+
+    data = {
+        'company': company_name,
+        'division': division_name,
+        'division_id': division_id
+    }
+    return JsonResponse(data)
+
+get_med_rep_info.view_name = 'Get Medical Representative Info (API)'
+get_med_rep_info.synonyms = ['Fetch MR Info', 'Retrieve MR Info', 'Get MR Info', 'Get Medical Representative Information',
+                             'Fetch Medical Representative Info', 'Retrieve Medical Representative Info']
+
+
+# company/views.py
+def mr_transfer(request):
+    medical_representatives = MedicalRepresentative.objects.all()
+    companies = Company.objects.all()
+    divisions = Division.objects.all()
+    error_message = None
+
+    if request.method == 'POST':
+        med_rep_id = request.POST.get('med_rep_id')
+        leaving_division_id = request.POST.get('leaving_division_id', None)
+        joining_division_id = request.POST.get('joining_division_id', None)
+        joining_company_id = request.POST.get('joining_company_id', None)
+
+        logger.debug(f"med_rep_id: {med_rep_id}, leaving_division_id: {leaving_division_id}, joining_division_id: {joining_division_id}, joining_company_id: {joining_company_id}")
+
+        success = transfer_medical_representative(med_rep_id, leaving_division_id, joining_division_id, joining_company_id)
+        if success:
+            return redirect('list_medical_representatives')  # Adjust the redirect as needed
+        else:
+            error_message = "An error occurred during the transfer. Please try again."
+
+    return render(request, 'company/mr_transfer.html', {
+        'medical_representatives': medical_representatives,
+        'companies': companies,
+        'divisions': divisions,
+        'error_message': error_message
+    })
+
+mr_transfer.view_name = 'Transfer MR'
+mr_transfer.synonyms = ['Move MR', 'Relocate MR', 'Transfer MR', 'Transfer Medical Representative']
