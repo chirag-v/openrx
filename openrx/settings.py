@@ -54,8 +54,10 @@ INSTALLED_APPS = [
     'gst.apps.GstConfig',
     'item.apps.ItemConfig',
     'purchase.apps.PurchaseConfig',
-    "inventory.apps.InventoryConfig",
-    "sale.apps.SaleConfig"
+    'inventory.apps.InventoryConfig',
+    'sale.apps.SaleConfig',
+    'rest_framework',
+    "api.apps.ApiConfig"
 
 ]
 
@@ -206,3 +208,19 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 #         },
 #     },
 # }
+
+# Djano Rest Framework settings
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+}

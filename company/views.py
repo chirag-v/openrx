@@ -183,9 +183,9 @@ def division_delete(request, pk):
 
 logger = logging.getLogger(__name__)
 
-def add_or_edit_medical_representative(request, pk=None):
-    if pk:
-        representative = get_object_or_404(MedicalRepresentative, pk=pk)
+def add_or_edit_medical_representative(request, id=None):
+    if id:
+        representative = get_object_or_404(MedicalRepresentative, id=id)
         is_edit = True
     else:
         representative = MedicalRepresentative()
@@ -215,17 +215,6 @@ def add_or_edit_medical_representative(request, pk=None):
 add_or_edit_medical_representative.view_name = 'Add Medical Representative'
 add_or_edit_medical_representative.synonyms = ['Add MR', 'Create MR', 'Add New MR', 'Create New MR', 'Add Medical Representative', 'Create Medical Representative', 'Add New Medical Representative', 'Create New Medical Representative']
 
-def edit_medical_representative(request, pk):
-    representative = get_object_or_404(MedicalRepresentative, pk=pk)
-    if request.method == 'POST':
-        form = MedicalRepresentativeForm(request.POST, instance=representative)
-        if form.is_valid():
-            form.save()
-            return redirect('list_medical_representatives')  # Redirect to a new URL
-    else:
-        form = MedicalRepresentativeForm(instance=representative)
-    return render(request, 'company/add_medical_representative.html', {'form': form, 'representative': representative})
-
 
 def list_medical_representatives(request):
     representatives = MedicalRepresentative.objects.all()
@@ -244,32 +233,6 @@ def delete_medical_representative(request, pk):
 
 
 
-def get_med_rep_info(request):
-    med_rep_id = request.GET.get('med_rep_id')
-    med_rep = MedicalRepresentative.objects.get(id=med_rep_id)
-
-    if med_rep.division:
-        company_name = med_rep.division.company.name
-        division_name = med_rep.division.name
-        division_id = med_rep.division.id
-    else:
-        company_name = med_rep.company.name if med_rep.company else 'N/A'
-        division_name = 'This company has no division'
-        division_id = ''
-
-    data = {
-        'company': company_name,
-        'division': division_name,
-        'division_id': division_id
-    }
-    return JsonResponse(data)
-
-get_med_rep_info.view_name = 'Get Medical Representative Info (API)'
-get_med_rep_info.synonyms = ['Fetch MR Info', 'Retrieve MR Info', 'Get MR Info', 'Get Medical Representative Information',
-                             'Fetch Medical Representative Info', 'Retrieve Medical Representative Info']
-
-
-# company/views.py
 def mr_transfer(request):
     medical_representatives = MedicalRepresentative.objects.all()
     companies = Company.objects.all()
@@ -299,3 +262,4 @@ def mr_transfer(request):
 
 mr_transfer.view_name = 'Transfer MR'
 mr_transfer.synonyms = ['Move MR', 'Relocate MR', 'Transfer MR', 'Transfer Medical Representative']
+

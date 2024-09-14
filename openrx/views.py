@@ -10,7 +10,7 @@ from .forms import LoginForm
 from django.http import JsonResponse
 
 
-def get_apps_and_features():
+def get_apps_and_features() -> object:
     apps_and_features = []
     for app_config in apps.get_app_configs():
         if app_config.name.startswith('django.') or str(app_config.path).startswith(str(settings.BASE_DIR)) is False:
@@ -24,7 +24,11 @@ def get_apps_and_features():
             for pattern in getattr(app_urls, 'urlpatterns', []):
                 try:
                     view_func = resolve(reverse(pattern.name)).func
-                    view_name = getattr(view_func, 'view_name', view_func.__name__) if pattern.name else 'Unnamed View'
+                    view_class = getattr(view_func, 'view_class', None)
+                    if view_class:
+                        view_name = getattr(view_class, 'view_name', view_class.__name__)
+                    else:
+                        view_name = getattr(view_func, 'view_name', view_func.__name__) if pattern.name else 'Unnamed View'
                     features.append({'name': view_name, 'url': reverse(pattern.name)})
                 except:
                     continue
@@ -66,8 +70,6 @@ def homepage(request):
     return render(request, 'homepage.html', {'apps_and_features': apps_and_features})
 
 
-# openrx/views.py
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -83,9 +85,16 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+login_view.view_name = 'Secure Login'
+login_view.synonyms = ['Signin', 'Log in']  # Synonyms for the view name
+
+
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+logout_view.view_name = 'Logout'
+logout_view.synonyms = ['Signout', 'Log out', 'Log off']  # Synonyms for the view name
 
 
 # openrx/views.py

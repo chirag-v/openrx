@@ -4,7 +4,7 @@ from django.urls import path
 from .views import (company_list, delete_company, division_list, division_edit,
                     division_create, division_delete, get_divisions, add_or_edit_company,
                     add_or_edit_medical_representative, list_medical_representatives, delete_medical_representative,
-                    get_med_rep_info, mr_transfer)
+                    mr_transfer)
 
 urlpatterns = [
     path('company_list', company_list, name='company_list'),
@@ -20,6 +20,5 @@ urlpatterns = [
     path('delete_medical_representative/<int:pk>', delete_medical_representative, name='delete_medical_representative'),
     path('list_medical_representatives', list_medical_representatives, name='list_medical_representatives'),
     path('mr_transfer', mr_transfer, name='mr_transfer'),
-    path('get_med_rep_info/', get_med_rep_info, name='get_med_rep_info'),
     path('get_divisions/<int:company_id>/', get_divisions, name='get_divisions'),
 ]

@@ -59,7 +59,7 @@
 <script>
     function fetchMedRepInfo(medRepId) {
         if (medRepId) {
-            fetch(`/company/get_med_rep_info/?med_rep_id=${medRepId}`)
+            fetch(`/api/med-rep-info/?med_rep_id=${medRepId}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('leaving_company').value = data.company;

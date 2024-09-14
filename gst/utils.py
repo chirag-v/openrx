@@ -14,4 +14,3 @@ def get_state_name_by_code(code):
         '38': 'LADAKH', '97': 'OTHER TERRITORY', '99': 'CENTRE JURISDICTION'
     }
     return state_codes.get(code, '')
-
