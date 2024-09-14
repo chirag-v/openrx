@@ -53,10 +53,16 @@ class PurchaseItem(models.Model):
         super().save(*args, **kwargs)
 
     def calculate_amount(self):
-        discount_from_percentage = (self.purchase_rate * self.quantity) * (self.item_discount_percentage / 100)
-        total_discount = discount_from_percentage + self.item_discount_amount
-        discounted_amount = (self.purchase_rate * self.quantity) - total_discount
+        purchase_rate = Decimal(self.purchase_rate)
+        quantity = Decimal(self.quantity)
+        item_discount_percentage = Decimal(self.item_discount_percentage)
+        item_discount_amount = Decimal(self.item_discount_amount)
+
+        discount_from_percentage = (purchase_rate * quantity) * (item_discount_percentage / Decimal(100))
+        total_discount = discount_from_percentage + item_discount_amount
+        discounted_amount = (purchase_rate * quantity) - total_discount
         gst_amount = discounted_amount * (Decimal(self.item.gst.percentage) / Decimal(100))
+
         self.amount = discounted_amount + gst_amount
         self.save()
 
