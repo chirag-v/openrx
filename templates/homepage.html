@@ -1,69 +1,146 @@
 {% extends 'base.html' %}
 
-<body>
 {% block content %}
-    <div class="container">
-        <!-- Hero Section -->
-        <div class="jumbotron bg-info-subtle text-dark rounded-4 align-middle text-center py-5 mt-4 shadow-lg border border-3 border-primary animate__animated animate__fadeInDown">
-            <h1 class="display-4 fw-bolder text-uppercase position-relative">
-                Welcome to OpenR<sub>x</sub> ERP
-                <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-primary shadow">
-                   Free!
-                </span>
-            </h1>
-            <p class="lead fs-5 fst-italic fw-bold">Your Secure, On-Premise Solution for Retail Pharmacies in India, with Cloud Flexibility.</p>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="jumbotron bg-info-subtle text-dark rounded-4 align-middle text-center py-2 mt-3 shadow-lg border border-3 border-primary animate__animated animate__fadeInDown">
+        <h1 class="display-5 fw-bold text-uppercase position-relative mb-2" style="font-size: 2.5rem;">
+            Welcome to OpenR<sub>x</sub> ERP
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary shadow">
+                Free!
+            </span>
+        </h1>
+        <p class="lead fs-6 fst-italic fw-bold mb-2" style="font-size: 1rem;">Your Secure, On-Premise Solution for Retail Pharmacies in India, with Cloud Flexibility.</p>
+        
+        <!-- CTA Buttons -->
+        <div class="justify-content-center mt-3">
+            <a href="https://github.com/chirag-v/openrx/archive/refs/heads/master.zip" class="btn bg-primary text-white btn-lg me-3">Download</a>
+            <a href="https://operxerp.com" class="btn bg-primary text-white btn-lg me-3">Documentation</a>
         </div>
-
-        <!-- Features Section -->
-        {% if apps_and_features %}
-            <p id="features" class="feature-heading text-center fs-2 my-4 text-info animate__animated animate__fadeInUp">Explore our Features:</p>
-            <div class="row gx-4 gy-4">
-                {% for app in apps_and_features %}
-                    {% if app.features %}
-                        <div class="col-lg-4 col-md-6 col-sm-12">
-                            <div class="feature-tile card shadow-lg h-100 border border-3 border-info animate__animated animate__zoomIn animate__delay-{{ forloop.counter0 }}s">
-                                <div class="card-body p-4">
-                                    <h3 class="card-title text-center text-primary fw-bold">{{ app.name }}</h3>
-                                    <ul class="list-group list-group-flush mt-3">
-                                        {% for feature in app.features %}
-                                            <li class="fs-5 list-group-item bg-transparent py-2">
-                                                <a href="{{ feature.url }}" class="text-info text-decoration-none">{{ feature.name|safe }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
+    </div>
+    
+    <!-- Features Section -->
+    {% if apps_and_features %}
+        <p id="features" class="feature-heading text-center fs-2 my-4 text-info animate__animated animate__fadeInUp">Explore our Features:</p>
+        <!-- CSS Grid Container for Features -->
+        <div class="d-grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+            {% for app in apps_and_features %}
+                {% if app.features %}
+                    <div class="card shadow-lg border border-3 border-info animate__animated animate__zoomIn animate__delay-{{ forloop.counter0 }}s">
+                        <div class="card-body">
+                            <h3 class="card-title text-center text-primary fw-bold">{{ app.name }}</h3>
+                            <ul class="list-group list-group-flush mt-3">
+                                {% for feature in app.features %}
+                                    <li class="fs-5 list-group-item bg-transparent py-2">
+                                        <a href="{{ feature.url }}" class="text-info text-decoration-none">{{ feature.name|safe }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <!-- Call to Action Section -->
-        <div class="row justify-content-center my-5">
-            <div class="col-auto col-md-10">
-                <div class="card bg-dark text-white py-5 px-4 border-3 border-primary shadow-lg animate__animated animate__fadeInUp animate__delay-2s">
-                    <!-- Title Section -->
-                    <div class="card-header bg-transparent border-0 text-center mb-2">
-                        <h2 class="card-title fw-bold text-info text-uppercase">
-                            Future-Proof Your Pharmacy Business with OpenRx ERP
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- API Links Section -->
+    <div class="row justify-content-center my-5">
+        <div class="col-auto col-lg-8 col-md-10">
+            <div class="jumbotron bg-dark text-white py-5 px-4 rounded-4 border border-primary shadow-lg animate__animated animate__fadeInUp animate__delay-2s position-relative overflow-hidden">
+                <!-- Decorative Background Elements -->
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1), transparent 60%), radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.05), transparent 70%);"></div>
+                
+                <!-- Title Section -->
+                <div class="jumbotron bg-transparent border-0 text-center mb-4 position-relative z-1">
+                    <!-- Icon and Title -->
+                    <div class="d-flex justify-content-center align-items-center mb-2">
+                        <!-- Unicode Icon for API -->
+                        <span class="fs-3 me-2" style="color: #17a2b8;">&#128268;</span>
+                        <h2 class="card-title fw-bold text-info mb-0">
+                            API Endpoints
                         </h2>
                     </div>
-                    <!-- Content Section -->
-                    <div class="card-body fs-5 text-center">
-                        {% include "whats_new.html" %}
-                    </div>
+                    <p class="mt-2" style="color: #aaa;">
+                        You know how much you love that free buffet at your cousin's wedding? 🍲🍛 Our APIs are just like that—unlimited, delicious, and no one will side-eye you if you go back for more. 😏😋 Except here, you won’t even need to dance to "London Thumakda" 💃🕺 to get them! 🎉✨
+                    </p>
+                </div>
+                
+                <!-- Content Section for API Links -->
+                <div class="card-body position-relative z-1">
+                    <ul id="api-endpoints-list" class="list-group list-group-flush">
+                        <!-- Dynamic content will be added here by JavaScript -->
+                    </ul>
                 </div>
             </div>
         </div>
-
-        <!-- Floating Border for Highlight -->
-        <div class="border border-3 border-info rounded position-fixed bottom-0 end-0 m-4 p-2 shadow-lg animate__animated animate__pulse">
-            <a href="#top" class="text-info text-decoration-none">
-                <i class="bi bi-arrow-up fs-4"></i>
-            </a>
-        </div>
     </div>
-</body>
+    
+    <script>
+        fetch('/api/endpoints/')
+        .then(response => response.json())
+        .then(data => {
+            const list = document.getElementById('api-endpoints-list');
+            if (data && data.paths) {
+                for (const [path, methods] of Object.entries(data.paths)) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item bg-transparent d-flex flex-column align-items-start border-bottom border-secondary py-3';
 
+                    // Create a div to hold badge and link on the same line
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'd-flex align-items-center';
+
+                    // Create a badge for the request type
+                    const methodTypes = Object.keys(methods).map(method => method.toUpperCase());
+                    methodTypes.forEach(method => {
+                        const methodsBadge = document.createElement('span');
+                        methodsBadge.className = 'badge rounded-pill me-2';
+                        methodsBadge.textContent = method;
+
+                        // Color code the badge based on request type
+                        switch (method) {
+                            case 'GET':
+                                methodsBadge.classList.add('bg-success');
+                                break;
+                            case 'POST':
+                                methodsBadge.classList.add('bg-primary');
+                                break;
+                            case 'PUT':
+                                methodsBadge.classList.add('bg-warning');
+                                break;
+                            case 'DELETE':
+                                methodsBadge.classList.add('bg-danger');
+                                break;
+                            default:
+                                methodsBadge.classList.add('bg-secondary');
+                        }
+
+                        headerDiv.appendChild(methodsBadge);
+                    });
+
+                    // Create a hyperlink for each endpoint
+                    const link = document.createElement('a');
+                    link.href = path; // Sets the URL to the endpoint path
+                    link.textContent = path; // Sets the link text to the path
+                    link.className = 'text-info text-decoration-none fw-bold'; // Adds styling for the link
+
+                    // Append the link to the header div
+                    headerDiv.appendChild(link);
+
+                    // Add a description for each endpoint if available
+                    const description = document.createElement('p');
+                    description.className = 'text-light mb-2';
+                    description.textContent = methods.get ? methods.get.description || 'No description available' : 'No description available';
+
+                    // Append the header div and description to the list item
+                    listItem.appendChild(headerDiv);
+                    listItem.appendChild(description);
+                    list.appendChild(listItem);
+                }
+            } else {
+                list.innerHTML = '<li class="list-group-item bg-transparent text-muted">No API endpoints available.</li>';
+            }
+        })
+        .catch(error => console.error('Error fetching API endpoints:', error));
+    </script>
+</div>
 {% endblock %}

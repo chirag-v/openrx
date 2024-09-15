@@ -25,7 +25,7 @@ from openrx.views import homepage, login_view, logout_view, search_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', homepage, name='homepage'),
-    path('api/', include('api.urls')),
+    path('api/', include('api.urls', namespace='api')),
     path('customer/', include('customer.urls')),
     path('supplier/', include('supplier.urls')),
     path('company/', include('company.urls')),

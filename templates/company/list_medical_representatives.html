@@ -7,17 +7,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h2 class="text-center mb-4">List of Medical Representatives</h2>
-
+            
             <!-- Search form -->
             <form method="get" action="" class="mb-4">
                 <div class="input-group">
-                    <!-- Search Input -->
-                    <input type="text" class="form-control search-input" placeholder="Search representatives" name="search" value="{{ request.GET.search }}">
-
-                    <!-- Improved Search Button -->
-                    <button class="btn btn-search" type="submit">
-                        &#128269; <!-- Unicode for the search icon -->
-                    </button>
+                    <input type="text" class="form-control search-input" placeholder="Search representatives by name or mobile number" name="search" value="{{ request.GET.search }}">
+                    <button class="btn btn-search" type="submit">&#128269;</button>
                     <a href="{% url 'add_medical_representative' %}" class="btn btn-success" style="margin-left: 1em">Add New Representative</a>
                 </div>
             </form>
@@ -33,7 +28,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for representative in representatives %}
+                        {% for representative in page_obj %}
                             <tr>
                                 <td>{{ representative.name }}</td>
                                 <td>{{ representative.mobile_number }}</td>

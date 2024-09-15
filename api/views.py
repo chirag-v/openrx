@@ -1,19 +1,58 @@
 # api/views.py
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.status import HTTP_400_BAD_REQUEST
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from company.models import MedicalRepresentative
 from item.models import Item
 from .serializers import MedicalRepresentativeInfoSerializer, ItemSerializer
 from gst.models import StateCode
+from rest_framework.views import APIView
+from rest_framework.schemas import get_schema_view
+from rest_framework.response import Response
+from rest_framework.renderers import JSONOpenAPIRenderer, CoreJSONRenderer, JSONRenderer
+
 
 
 class MedicalRepresentativeInfo(APIView):
-    view_name = 'Get Medical Representative Info'
+    """
+    Retrieves information about a medical representative based on the provided `med_rep_id`.
+    """
 
+    @extend_schema(
+        summary="Retrieve Medical Representative Information",
+        description="""
+        **Retrieve Medical Representative Information**
+
+        This endpoint allows users to fetch details of a specific medical representative by supplying 
+        their unique ID (`med_rep_id`). The response includes the associated company name, 
+        division information, and division ID.
+
+        ### Parameters:
+        - `med_rep_id` (integer): **Required**. The unique identifier of the medical representative.
+
+        ### Responses:
+        - `200 OK`: Returns the company name, division name, and division ID of the medical representative.
+        - `400 Bad Request`: If the `med_rep_id` parameter is missing, an error message is returned.
+
+        ### Example Requests:
+
+        - `GET /api/med-rep-info/?med_rep_id=3`
+        - `GET /api/med-rep-info/` (without parameter)
+
+        ### Example Response:
+
+        ```json
+        {
+            "company": "Bluecross",
+            "division": "This company has no division",
+            "division_id": ""
+        }
+        ```
+        """,
+        responses={200: "Success", 400: "Bad Request"}
+    )
     def get(self, request):
         med_rep_id = request.query_params.get('med_rep_id')
         if med_rep_id is not None:
@@ -41,17 +80,19 @@ class MedicalRepresentativeInfo(APIView):
 
 
 class GetStateName(APIView):
-    view_name = 'Get State Name'
+    """
+    Get the name of corresponding Indian state by providing its two-digit GST state code.
+    """
     def get(self, request):
         code = request.query_params.get('code')
-        if code:
-            state = StateCode.objects.filter(code=code).first()
-            if state:
-                return Response({'stateName': state.name})
-            else:
-                return Response({'error': 'State not found'}, status=404)
-        return Response({'error': 'Code parameter is required'}, status=400)
+        if not code:
+            return Response({'error': 'State code is required'}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            state = StateCode.objects.get(code=code)
+            return Response({'stateName': state.name}, status=status.HTTP_200_OK)
+        except StateCode.DoesNotExist:
+            return Response({'error': 'State code not found'}, status=status.HTTP_404_NOT_FOUND)
 
 # Pagination class for API
 class StandardResultsSetPagination(PageNumberPagination):
@@ -84,8 +125,60 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class GetItems(APIView):
     """
-    Versatile API view to fetch and filter items.
-    Supports search, filtering, sorting, and pagination.
+    Versatile API view to fetch and filter items. Supports search, filtering, sorting, and pagination.
+
+    Summary:
+    Retrieve a list of items with optional search, filtering, sorting, and pagination capabilities.
+
+    Parameters:
+        - q (string, optional): Search query to filter items by name or SKU;
+        - item_type (string, optional): Filter by item type;
+        - min_price (float, optional): Minimum price filter;
+        - max_price (float, optional): Maximum price filter;
+        - company_id (integer, optional): Filter by company ID;
+        - division_id (integer, optional): Filter by division ID;
+        - current_status (string, optional): Filter by current status;
+        - prescription_required (boolean, optional): Filter by prescription requirement ("true" or "false");
+        - sort_by (string, optional): Sort field ('name', 'mrp', 'created_at', 'updated_at', 'weight', 'sku');
+        - order (string, optional): Sorting order ('asc' or 'desc').
+
+    Responses:
+        - 200 OK: Returns a paginated list of items with the requested filters.
+        - 400 Bad Request: If any of the parameters are invalid or missing.
+
+    Example Requests:
+        - GET /api/get-items/?q=paracetamol&item_type=tablet&min_price=10&max_price=100&company_id=3&sort_by=mrp&order=desc
+        - GET /api/get-items/?q=paracetamol&item_type=tablet&min_price=10&max_price=100&company_id=3&sort_by=mrp&order=desc&page=2
+    Example Response:
+        {
+            "links": {
+                "next": "http://localhost:8000/api/get-items/?page=2",
+                "previous": null
+            },
+            "total": 100,
+            "per_page": 10,
+            "total_pages": 10,
+            "current_page": 1,
+            "page_size": 10,
+            "has_next": true,
+            "has_previous": false,
+            "start_index": 1,
+            "end_index": 10,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "Paracetamol Tablet",
+                    "mrp": 20.0,
+                    "created_at": "2021-09-01T10:00:00Z",
+                    "updated_at": "2021-09-01T10:00:00Z",
+                    "weight": 500,
+                    "sku": "PCT500",
+                    ...
+                },
+                ...
+            ]
+        }
+
     """
     view_name = 'Get Items'
     serializer_class = ItemSerializer
@@ -101,8 +194,6 @@ class GetItems(APIView):
             if search_query:
                 items = items.filter(
                     Q(name__icontains=search_query) |
-                    Q(use__icontains=search_query) |
-                    Q(batch_number__icontains=search_query) |
                     Q(sku__icontains=search_query)
                 )
 
@@ -170,3 +261,63 @@ class GetItems(APIView):
         except Exception as e:
             # Handle exceptions gracefully
             return Response({"error": str(e)}, status=HTTP_400_BAD_REQUEST)
+
+
+
+
+class SchemaView(APIView):
+    """
+    API Schema view using DRF Spectacular.
+
+    This view generates the OpenAPI schema for all the API endpoints in the project.
+    It uses the `drf-spectacular` package for generating a more detailed schema.
+    """
+
+    @extend_schema(
+        summary="API Schema",
+        description="Returns the OpenAPI schema for all API endpoints in the project."
+    )
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests to return the OpenAPI schema.
+        """
+        # Get the schema generator instance
+        generator = self.schema.get_generator()
+
+        # Generate the schema document using the current request
+        schema = generator.get_schema(request=request)
+
+        # Return the generated schema as a JSON response
+        return Response(schema)
+
+
+# Get a schema view instance
+schema_view = get_schema_view(
+    title="API Schema",
+    description="All available API endpoints in the project.",
+    version="1.0.0",
+    renderer_classes=[CoreJSONRenderer, JSONOpenAPIRenderer, JSONRenderer]
+)
+
+
+class ApiEndpointsView(APIView):
+    """
+    View to display all API endpoints dynamically in DRF browsable API format.
+    """
+    # Specify the renderers to display schema in different formats
+    renderer_classes = [CoreJSONRenderer, JSONOpenAPIRenderer]
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests to return the API schema.
+        """
+        # Generate the schema using DRF's schema generator
+        schema_generator = get_schema_view(
+            title="API Schema",
+            description="All available API endpoints in the project.",
+            version="1.0.0",
+            renderer_classes=self.renderer_classes
+        )
+
+        # Call the schema view and return its response
+        return schema_generator(request=request)

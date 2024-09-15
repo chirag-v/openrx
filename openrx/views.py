@@ -9,6 +9,10 @@ from django.shortcuts import render, redirect
 from .forms import LoginForm
 from django.http import JsonResponse
 
+from rest_framework.views import APIView
+from rest_framework.schemas import get_schema_view
+from rest_framework.renderers import CoreJSONRenderer, JSONRenderer
+
 def get_apps_and_features() -> object:
     apps_and_features = []
     for app_config in apps.get_app_configs():
@@ -112,4 +116,6 @@ def search_view(request):
                 if query.lower() in feature_name or any(query.lower() in synonym.lower() for synonym in synonyms):
                     results.append({'name': feature['name'], 'url': feature['url']})
     return JsonResponse({'results': results})
+
+
 

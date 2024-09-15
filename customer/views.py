@@ -43,6 +43,7 @@ customer_list.synonyms = ['List Customers', 'View Customers', 'Show Customers', 
 
 
 
+
 def delete_customer(request, id):
     customer = get_object_or_404(Customer, pk=id)
     if request.method == 'POST':  # Confirm deletion
@@ -77,3 +78,6 @@ def customer_form(request, customer_id=None):
 
 customer_form.view_name = 'Add Customer'
 customer_form.synonyms = ['Add New Customer', 'Create Customer', 'Create New Customer', 'Add Client', 'Add New Client', 'Create Client', 'Create New Client', 'Add Patient', 'Add New Patient', 'Create Patient', 'Create New Patient', 'Add User', 'Add New User', 'Create User', 'Create New User', 'Add Member', 'Add New Member', 'Create Member', 'Create New Member', 'Add Subscriber', 'Add New Subscriber', 'Create Subscriber', 'Create New Subscriber', 'Add Customer', 'Add New Customer', 'Create Customer', 'Create New Customer', 'Add Client', 'Add New Client', 'Create Client', 'Create New Client', 'Add Patient', 'Add New Patient', 'Create Patient', 'Create New Patient', 'Add User', 'Add New User', 'Create User', 'Create New User', 'Add Member', 'Add New Member', 'Create Member', 'Create New Member', 'Add Subscriber', 'Add New Subscriber', 'Create Subscriber', 'Create New Subscriber', 'Add Customer', 'Add New Customer', 'Create Customer', 'Create New Customer', 'Add Client', 'Add New Client', 'Create Client', 'Create New Client', 'Add Patient', 'Add New Patient', 'Create Patient', 'Create New Patient', 'Add User', 'Add New User', 'Create User', 'Create New User', 'Add Member', 'Add New Member', 'Create Member', 'Create New Member', 'Add Subscriber', 'Add New Subscriber', 'Create Subscriber', 'Create New Subscriber', 'Add Customer', 'Add New Customer', 'Create Customer', 'Create New Customer', 'Add Client', 'Add New Client', 'Create Client', 'Create New Client', 'Add Patient', 'Add New Patient', 'Create Patient', 'Create New Patient', 'Add User', 'Add New User', 'Create User', 'Create New User', 'Add Member', 'Add New Member', 'Create Member', 'Create New Member', 'Add Subscriber', 'Add New Subscriber', 'Create Subscriber', 'Create New Subscriber', 'Add Customer', 'Add New Customer', 'Create Customer', 'Create New Customer', 'Add Client', 'Add New Client', 'Create Client', 'Create New Client', 'Add Patient', 'Add New Patient', 'Create Patient', 'Create New Patient', 'Add User', 'Add New User', 'Create User']
+
+
+

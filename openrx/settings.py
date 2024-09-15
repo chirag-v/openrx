@@ -13,9 +13,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 # Standard Library Imports
 import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
+
 
 # Third-Party Imports
 from dotenv import load_dotenv
+
 # Do not import in production
 # import logging
 # import logging.config
@@ -57,7 +60,8 @@ INSTALLED_APPS = [
     'inventory.apps.InventoryConfig',
     'sale.apps.SaleConfig',
     'rest_framework',
-    'api.apps.ApiConfig'
+    'api.apps.ApiConfig',
+
 
 ]
 
@@ -76,7 +80,6 @@ MIDDLEWARE = [
 LOGIN_URL = '/secure-gateway/'
 
 # Configure message tags
-from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
@@ -223,4 +226,5 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
 }

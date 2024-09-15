@@ -53,8 +53,8 @@ def add_or_edit_company(request, id=None):
 
     return render(request, 'company/add_company.html', {'form': form, 'is_edit': id is not None})
 
-add_or_edit_company.view_name = 'Add or Edit Company'
-add_or_edit_company.synonyms = ['Add Company', 'Edit Company', 'Create Company', 'Update Company']
+add_or_edit_company.view_name = 'Add Company'
+add_or_edit_company.synonyms = ['Add Company', 'Create Company']
 
 
 # Company Edit
@@ -217,8 +217,21 @@ add_or_edit_medical_representative.synonyms = ['Add MR', 'Create MR', 'Add New M
 
 
 def list_medical_representatives(request):
-    representatives = MedicalRepresentative.objects.all()
-    return render(request, 'company/list_medical_representatives.html', {'representatives': representatives})
+    search_query = request.GET.get('search', '')
+    if search_query:
+        representatives = MedicalRepresentative.objects.filter(
+            name__icontains=search_query
+        ) | MedicalRepresentative.objects.filter(
+            mobile_number__icontains=search_query
+        )
+    else:
+        representatives = MedicalRepresentative.objects.all().order_by('-id')
+
+    paginator = Paginator(representatives, 10)  # Show 10 representatives per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'company/list_medical_representatives.html', {'page_obj': page_obj, 'search_query': search_query})
 
 list_medical_representatives.view_name = 'List of Medical Representatives'
 list_medical_representatives.synonyms = ['List MRs', 'View MRs', 'Show MRs', 'Display MRs', 'View List of MRs',
