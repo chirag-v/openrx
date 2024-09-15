@@ -2,8 +2,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
-import gst
-from gst.utils import get_state_name_by_code
+from gst.models import StateCode
 from gst.validators import gstin_validator
 
 
@@ -66,14 +65,14 @@ class Customer(models.Model):
     state_code = models.CharField(max_length=2, null=True, blank=True)
     state = models.CharField(max_length=50, null=True, blank=True)
     pan = models.CharField(max_length=10, null=True, blank=True)
-    STATUS_CHOICES = [
+    CURRENT_STATUS_CHOICES = [
         ('active', 'Active'),
         ('inactive', 'Inactive'),
     ]
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='active')
+    current_status = models.CharField(max_length=8, choices=CURRENT_STATUS_CHOICES, default='active')
 
     # Add the __str__ method here to ensure it always returns a valid string
     def __str__(self):
@@ -131,18 +130,22 @@ class Customer(models.Model):
             except ValidationError as e:
                 raise ValidationError({'gstin': e.message})
 
-    def save(self, *args, **kwargs):
-        if self.gstin:
-            self.state_code = self.gstin[:2]
-            self.pan = self.gstin[2:12]
-            self.state = gst.utils.get_state_name_by_code(self.state_code)
-        super(Customer, self).save(*args, **kwargs)
+
+
+def save(self, *args, **kwargs):
+    if self.gstin:
+        self.state_code = self.gstin[:2]
+        self.pan = self.gstin[2:12]
+        state = StateCode.objects.filter(code=self.state_code).first()
+        self.state = state.name if state else ''
+
+    super(Customer, self).save(*args, **kwargs)
 
 
     @staticmethod
     def some_other_static_method(code):
-        state_name = get_state_name_by_code(code)
-        return state_name
+        state = StateCode.objects.filter(code=code).first()
+        return state.name if state else ''
 
 
     class Meta:

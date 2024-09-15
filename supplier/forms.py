@@ -13,7 +13,7 @@ class SupplierForm(forms.ModelForm):
                   'phone2', 'phone3', 'mobile', 'owner_name', 'owner_mobile', 'manager_name', 'manager_mobile',
                   'gst_registration', 'gstin', 'state_code', 'state', 'pan', 'drug_license1', 'drug_license1_validity',
                   'drug_license2', 'drug_license2_validity', 'food_registration', 'food_registration_validity',
-                  'status']
+                  'current_status']
 
     widgets = {
         'name': forms.TextInput(attrs={'id': 'id_name', 'class': 'form-control'}),

@@ -65,14 +65,14 @@ class ItemForm(ModelForm):
         super().__init__(*args, **kwargs)
         try:
             # Dynamically set choices for the 'gst' field in the __init__ method
-            self.fields['gst'].choices = [(gst.id, f"{gst.percentage}%") for gst in GST.objects.all()]
+            self.fields['gst'].choices = [(gst.id, f"{gst.rate.percentage}%") for gst in GST.objects.all()]
 
             # Dynamically set choices for the 'company' and 'division' fields in the __init__ method
             self.fields['company'].choices = [(company.id, company.name) for company in Company.objects.all()]
             self.fields['division'].choices = [(division.id, division.name) for division in Division.objects.all()]
 
             # Set default value for the 'gst' field
-            default_gst = GST.objects.get(percentage=12.0)
+            default_gst = GST.objects.select_related('rate').get(rate__percentage=12.0)
             self.fields['gst'].initial = default_gst.id
         except GST.DoesNotExist:
             pass

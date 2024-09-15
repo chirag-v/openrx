@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'inventory.apps.InventoryConfig',
     'sale.apps.SaleConfig',
     'rest_framework',
-    "api.apps.ApiConfig"
+    'api.apps.ApiConfig'
 
 ]
 

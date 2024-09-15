@@ -1,10 +1,14 @@
 # supplier/tests/test_models.py
 import pytest
 from supplier.models import Supplier
+from gst.models import StateCode
 from datetime import date
 
 @pytest.mark.django_db
 def test_supplier_model_creation():
+    # Ensure the state code exists in the database
+    StateCode.objects.create(code='07', name='DELHI')
+
     supplier = Supplier.objects.create(
         name='Test Supplier',
         country='India',
@@ -20,5 +24,6 @@ def test_supplier_model_creation():
         drug_license1_validity=date.today(),
         status='active'
     )
+
     assert supplier.id is not None
-    assert supplier.state.lower() == 'delhi'.lower()  # Normalize case for comparison
+    assert supplier.state == 'DELHI'

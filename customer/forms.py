@@ -1,9 +1,6 @@
-# customer/forms.py
 from django import forms
 from .models import Customer
 from gst.validators import gstin_validator
-
-
 
 class CustomerForm(forms.ModelForm):
     gstin = forms.CharField(validators=[gstin_validator], required=False)  # Applying validator to gstin field
@@ -13,16 +10,16 @@ class CustomerForm(forms.ModelForm):
         fields = [
             'title', 'name', 'surname', 'firm_name', 'address_line1', 'address_line2',
             'email', 'landmark', 'city', 'pincode', 'phone', 'mobile', 'type',
-            'category', 'gst_registration', 'gstin', 'state_code', 'state', 'pan', 'status'
+            'category', 'gst_registration', 'gstin', 'state_code', 'state', 'pan', 'current_status'
         ]
 
         widgets = {
             'title': forms.Select(attrs={'id': 'id_title'}, choices=Customer.TITLE_CHOICES),
-            'type': forms.RadioSelect(attrs={'class': 'type-radio'},choices= Customer.TYPE_CHOICES),
+            'type': forms.RadioSelect(attrs={'class': 'type-radio'}, choices=Customer.TYPE_CHOICES),
             'category': forms.Select(choices=Customer.CATEGORY_CHOICES),
             'gst_registration': forms.Select(choices=Customer.GST_REGISTRATION_CHOICES),
-            'status': forms.Select(choices=Customer.STATUS_CHOICES),
-            'gstin': forms.TextInput(attrs={'maxlength': 15, 'required':False}),
+            'current_status': forms.Select(choices=Customer.CURRENT_STATUS_CHOICES),
+            'gstin': forms.TextInput(attrs={'maxlength': 15, 'required': False}),
             'name': forms.TextInput(attrs={'id': 'id_name', 'class': 'form-control'}),
             'surname': forms.TextInput(attrs={'id': 'id_surname', 'class': 'form-control'}),
             'firm_name': forms.TextInput(attrs={'id': 'id_firm_name', 'class': 'form-control'}),
@@ -33,9 +30,10 @@ class CustomerForm(forms.ModelForm):
             'state': forms.TextInput(attrs={'id': 'id_state', 'class': 'form-control'}),
             'pan': forms.TextInput(attrs={'id': 'id_pan'}),
         }
-        def __init__(self, *args, **kwargs):
-            super(CustomerForm, self).__init__(*args, **kwargs)
-            self.fields['gstin'].required = False
+
+    def __init__(self, *args, **kwargs):
+        super(CustomerForm, self).__init__(*args, **kwargs)
+        self.fields['gstin'].required = False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -69,4 +67,3 @@ class CustomerForm(forms.ModelForm):
             self.add_error('category', 'Invalid category for B2C type.')
 
         return cleaned_data
-

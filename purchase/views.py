@@ -24,9 +24,10 @@ def create_purchase(request):
                 purchase_item.save()
             purchase.calculate_gross_amount()
             purchase.calculate_net_amount()
-            messages.success(request,
-                             'Purchase created successfully with Material Receipt (MR) Number : MR' + str(purchase.id))
+            messages.success(request, 'Purchase created successfully with Material Receipt (MR) Number : MR' + str(purchase.id))
             return redirect('purchase_list')
+        else:
+            messages.error(request, 'There was an error with your submission. Please check the form and try again.')
     else:
         form = PurchaseForm()
         formset = PurchaseItemFormSet(queryset=PurchaseItem.objects.none())
@@ -84,10 +85,8 @@ def edit_purchase(request, pk):
             return redirect('purchase_list')
         else:
             messages.error(request, 'There was an error with your submission. Please check the form and try again.')
-
     else:
         form = PurchaseForm(instance=purchase)
         formset = PurchaseItemFormSet(queryset=PurchaseItem.objects.filter(purchase=purchase))
 
     return render(request, 'purchase/purchase_entry.html', {'form': form, 'formset': formset})
-

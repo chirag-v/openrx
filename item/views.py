@@ -67,20 +67,16 @@ def delete_item(request, pk):
     return render(request, 'item/delete_item.html', {'item': item})
 
 
+# item/views.py
 def get_item_gst(request, item_id):
     try:
         item = Item.objects.get(id=item_id)
-        return JsonResponse({'gst': item.gst.percentage})
+        gst_rate = item.gst.rate
+        return JsonResponse({
+            'gst': {
+                'percentage': gst_rate.percentage,
+                'description': gst_rate.description
+            }
+        })
     except Item.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
-
-
-
-def get_items(request):
-    items = Item.objects.all().values('id', 'name')
-    return JsonResponse({'items': list(items)})
-
-get_items.view_name = 'Get Items (API)'
-get_items.synonyms = ['Get Products', 'Fetch Items', 'Get Items List', 'Fetch Products', 'Get Products List',
-                      'Fetch Items List', 'Get Products API', 'Fetch Items API', 'Get Items List API',
-                      'Fetch Products API', 'Get Products List API', 'Fetch Items List API']

@@ -30,7 +30,7 @@
                 {{ form.landmark|as_crispy_field }}
             </div>
         </div>
-
+        
         <div class="row">
             <!-- City -->
             <div class="col-md-4 mb-3">
@@ -156,7 +156,7 @@
         <div class="row">
             <!-- Status -->
             <div class="col-md-6 mb-3">
-                {{ form.status|as_crispy_field }}
+                {{ form.current_status|as_crispy_field }}
             </div>
         </div>
 
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
             panField.value = pan;
 
             // Fetch state name from the server
-            fetch(`/gst/get-state-name?code=${stateCode}`)
+            fetch(`/api/get-state-name/?code=${stateCode}`)
                 .then(response => response.json())
                 .then(data => {
                     if(data.stateName) { // Ensure data.stateName exists

@@ -1,20 +1,18 @@
 # gst/models.py
 from django.db import models
 
-class GST(models.Model):
-    GST_RATES = [
-        (0.0, '0%'),
-        (5.0, '5%'),
-        (12.0, '12%'),
-        (18.0, '18%'),
-        (28.0, '28%'),
-    ]
-
-    percentage = models.FloatField(choices=GST_RATES, unique=True)
+class GSTRate(models.Model):
+    percentage = models.FloatField(unique=True)
+    description = models.CharField(max_length=10)
 
     def __str__(self):
-        return f"{self.percentage}%"
+        return f"{self.percentage}% - {self.description}"
 
+class GST(models.Model):
+    rate = models.ForeignKey(GSTRate, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.rate)
 
 class StateCode(models.Model):
     code = models.CharField(max_length=2, unique=True)

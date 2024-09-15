@@ -1,6 +1,6 @@
 # openrx/views.py
-import re
 
+import re
 from django.apps import apps
 from django.urls import resolve, reverse, NoReverseMatch
 from django.conf import settings
@@ -8,7 +8,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from .forms import LoginForm
 from django.http import JsonResponse
-
 
 def get_apps_and_features() -> object:
     apps_and_features = []
@@ -29,8 +28,11 @@ def get_apps_and_features() -> object:
                         view_name = getattr(view_class, 'view_name', view_class.__name__)
                     else:
                         view_name = getattr(view_func, 'view_name', view_func.__name__) if pattern.name else 'Unnamed View'
+                        # Check if the view_func has a view_name attribute
+                        if hasattr(view_func, 'view_name'):
+                            view_name = view_func.view_name
                     features.append({'name': view_name, 'url': reverse(pattern.name)})
-                except:
+                except NoReverseMatch:
                     continue
         except ImportError:
             continue
@@ -43,7 +45,6 @@ def get_apps_and_features() -> object:
     apps_and_features.sort(key=lambda app: app['name'])
 
     return apps_and_features
-
 
 def handle_dynamic_url(pattern):
     """

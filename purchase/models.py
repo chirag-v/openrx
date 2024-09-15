@@ -13,7 +13,7 @@ class Purchase(models.Model):
     ]
     supplier_name = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     purchase_type = models.CharField(max_length=6, choices=PURCHASE_TYPE_CHOICES)
-    invoice_number = models.CharField(max_length=50, unique=True)
+    invoice_number = models.CharField(max_length=50)
     invoice_date = models.DateField()
     grn_date = models.DateField(auto_now_add=True)
     gross_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -61,10 +61,11 @@ class PurchaseItem(models.Model):
         discount_from_percentage = (purchase_rate * quantity) * (item_discount_percentage / Decimal(100))
         total_discount = discount_from_percentage + item_discount_amount
         discounted_amount = (purchase_rate * quantity) - total_discount
-        gst_amount = discounted_amount * (Decimal(self.item.gst.percentage) / Decimal(100))
+        gst_amount = discounted_amount * (Decimal(self.item.gst.rate.percentage) / Decimal(100))
 
         self.amount = discounted_amount + gst_amount
         self.save()
 
     def __str__(self):
         return f"{self.item.name} in Purchase {self.purchase.invoice_number}"
+

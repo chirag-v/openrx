@@ -1,18 +1,15 @@
-# purchase/forms.py
 from datetime import datetime, timedelta
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Purchase, PurchaseItem
-
 
 class MMYYDateField(forms.DateField):
     def to_python(self, value):
         if not value:
             return None
         try:
-            # Parse the input as mm/yy
             date = datetime.strptime(value, '%m/%y')
-            # Calculate the last day of the month
-            next_month = date.replace(day=28) + timedelta(days=4)  # this will never fail
+            next_month = date.replace(day=28) + timedelta(days=4)
             last_day_of_month = next_month - timedelta(days=next_month.day)
             return last_day_of_month.date()
         except ValueError:
@@ -22,10 +19,6 @@ class MMYYDateField(forms.DateField):
         if isinstance(value, datetime):
             return value.strftime('%m/%y')
         return value
-
-class PurchaseItemForm(forms.ModelForm):
-    expiry_date = MMYYDateField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'mm/yy'}))
-
 
 class PurchaseForm(forms.ModelForm):
     class Meta:
@@ -38,26 +31,38 @@ class PurchaseForm(forms.ModelForm):
             'invoice_number': forms.TextInput(attrs={'class': 'form-control'}),
             'invoice_discount': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
     def clean(self):
         cleaned_data = super().clean()
         supplier_name = cleaned_data.get('supplier_name')
-        purchase_type = cleaned_data.get('purchase_type')
         invoice_number = cleaned_data.get('invoice_number')
         invoice_date = cleaned_data.get('invoice_date')
-        invoice_discount = cleaned_data.get('invoice_discount')
+        financial_year_start = invoice_date.replace(month=4, day=1)
+        financial_year_end = invoice_date.replace(year=invoice_date.year + 1, month=3, day=31)
+
         if not supplier_name:
             raise forms.ValidationError('Supplier name is required')
-        if not purchase_type:
+        if not cleaned_data.get('purchase_type'):
             raise forms.ValidationError('Purchase type is required')
         if not invoice_number:
             raise forms.ValidationError('Invoice number is required')
         if not invoice_date:
             raise forms.ValidationError('Invoice date is required')
-        return cleaned_data
 
+        existing_purchases = Purchase.objects.filter(
+            supplier_name=supplier_name,
+            invoice_number=invoice_number,
+            invoice_date__range=(financial_year_start, financial_year_end)
+        ).exclude(pk=self.instance.pk)
+
+        if existing_purchases.exists():
+            raise ValidationError('Invoice number must be unique for the given supplier in the financial year.')
+
+        return cleaned_data
 
 class PurchaseItemForm(forms.ModelForm):
     expiry_date = MMYYDateField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'mm/yy'}))
+
     class Meta:
         model = PurchaseItem
         fields = ['item', 'mrp', 'quantity', 'free', 'batch_number', 'expiry_date', 'purchase_rate',
@@ -72,3 +77,11 @@ class PurchaseItemForm(forms.ModelForm):
             'item_discount_percentage': forms.NumberInput(attrs={'class': 'form-control', 'id': 'item_discount_percentage'}),
             'item_discount_amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'item_discount_amount'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        required_fields = ['item', 'mrp', 'quantity', 'batch_number', 'expiry_date', 'purchase_rate']
+        for field in required_fields:
+            if not cleaned_data.get(field):
+                raise forms.ValidationError(f'{field.replace("_", " ").capitalize()} is required')
+        return cleaned_data

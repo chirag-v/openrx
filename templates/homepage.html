@@ -3,42 +3,67 @@
 <body>
 {% block content %}
     <div class="container">
-        <div class="jumbotron bg-info-subtle text-dark rounded-4 align-middle text-center">
-            <h1>Welcome to OpenR<sub>x</sub> ERP</h1>
+        <!-- Hero Section -->
+        <div class="jumbotron bg-info-subtle text-dark rounded-4 align-middle text-center py-5 mt-4 shadow-lg border border-3 border-primary animate__animated animate__fadeInDown">
+            <h1 class="display-4 fw-bolder text-uppercase position-relative">
+                Welcome to OpenR<sub>x</sub> ERP
+                <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-primary shadow">
+                   Free!
+                </span>
+            </h1>
             <p class="lead fs-5 fst-italic fw-bold">Your Secure, On-Premise Solution for Retail Pharmacies in India, with Cloud Flexibility.</p>
         </div>
-        <p class="feature-heading text-center">Explore our features:</p>
-        <div class="row">
-            {% for app in apps_and_features %}
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="feature-tile">
-                        <h3>{{ app.name }}</h3>
-                        <ul>
-                            {% for feature in app.features %}
-                                <li class="fs-4 list list-group-flush bg-blue"><a href="{{ feature.url }}" class="text-info text-decoration-none">{{ feature.name }}</a></li>
-                            {% endfor %}
-                        </ul>
+
+        <!-- Features Section -->
+        {% if apps_and_features %}
+            <p id="features" class="feature-heading text-center fs-2 my-4 text-info animate__animated animate__fadeInUp">Explore our Features:</p>
+            <div class="row gx-4 gy-4">
+                {% for app in apps_and_features %}
+                    {% if app.features %}
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="feature-tile card shadow-lg h-100 border border-3 border-info animate__animated animate__zoomIn animate__delay-{{ forloop.counter0 }}s">
+                                <div class="card-body p-4">
+                                    <h3 class="card-title text-center text-primary fw-bold">{{ app.name }}</h3>
+                                    <ul class="list-group list-group-flush mt-3">
+                                        {% for feature in app.features %}
+                                            <li class="fs-5 list-group-item bg-transparent py-2">
+                                                <a href="{{ feature.url }}" class="text-info text-decoration-none">{{ feature.name|safe }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Call to Action Section -->
+        <div class="row justify-content-center my-5">
+            <div class="col-auto col-md-10">
+                <div class="card bg-dark text-white py-5 px-4 border-3 border-primary shadow-lg animate__animated animate__fadeInUp animate__delay-2s">
+                    <!-- Title Section -->
+                    <div class="card-header bg-transparent border-0 text-center mb-2">
+                        <h2 class="card-title fw-bold text-info text-uppercase">
+                            Future-Proof Your Pharmacy Business with OpenRx ERP
+                        </h2>
                     </div>
-                </div>
-            {% endfor %}
-            <div class="row justify-content-center my-5">
-                <div class="col-auto col-md-10">
-                    <div class="card bg-dark text-white py-5 px-4 border-3 border-primary shadow-lg">
-                        <!-- Title Section -->
-                        <div class="card-header bg-transparent border-0 text-center mb-3">
-                            <h2 class="card-title fw-bold text-info">
-                                Future-Proof Your Pharmacy Business with OpenRx ERP
-                            </h2>
-                        </div>
-                        <!-- Content Section -->
-                        <div class="card-body fs-5">
-                            {% include "whats_new.html" %}
-                        </div>
+                    <!-- Content Section -->
+                    <div class="card-body fs-5 text-center">
+                        {% include "whats_new.html" %}
                     </div>
                 </div>
             </div>
+        </div>
 
-    </div> </div>
+        <!-- Floating Border for Highlight -->
+        <div class="border border-3 border-info rounded position-fixed bottom-0 end-0 m-4 p-2 shadow-lg animate__animated animate__pulse">
+            <a href="#top" class="text-info text-decoration-none">
+                <i class="bi bi-arrow-up fs-4"></i>
+            </a>
+        </div>
+    </div>
 </body>
 
 {% endblock %}

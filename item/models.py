@@ -25,7 +25,7 @@ class Item(models.Model):
     weight = models.DecimalField(max_digits=10, decimal_places=2)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     division = models.ForeignKey(Division, on_delete=models.CASCADE, null=True, blank=True)
-    status = models.CharField(max_length=1, choices=[('A', 'Active'), ('D', 'Discontinued'), ('B', "Banned")], default='A')
+    current_status = models.CharField(max_length=1, choices=[('A', 'Active'), ('D', 'Discontinued'), ('B', "Banned")], default='A')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     gst = models.ForeignKey(GST, on_delete=models.CASCADE)

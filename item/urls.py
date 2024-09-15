@@ -1,6 +1,6 @@
 # item/urls.py
 from django.urls import path
-from .views import create_item, item_list, edit_item, delete_item, get_item_gst, get_items
+from .views import create_item, item_list, edit_item, delete_item, get_item_gst
 
 
 urlpatterns = [
@@ -9,6 +9,5 @@ urlpatterns = [
     path('edit/<int:pk>/', edit_item, name='edit_item'),
     path('delete/<int:pk>/', delete_item, name='delete_item'),
     path('get_item_gst/<int:item_id>/', get_item_gst, name='get_item_gst'),
-    path('get_items/', get_items, name='get_items'),
 
 ]

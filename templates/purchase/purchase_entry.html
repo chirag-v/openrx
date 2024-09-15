@@ -128,10 +128,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Fetch items for the dropdowns
     function fetchItems(callback) {
-        fetch('/item/get_items/')
+        fetch('/api/get-items/?format=json')
             .then(response => response.json())
             .then(data => {
-                callback(data.items);
+                if (Array.isArray(data.results)) {
+                    callback(data.results);
+                } else {
+                    console.error('Error: Expected an array but got', data.results);
+                    callback([]); // Pass an empty array to avoid undefined error
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching items:', error);
+                callback([]); // Pass an empty array to avoid undefined error
             });
     }
 
@@ -205,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.error) {
                     gstField.val('');
                 } else {
-                    gstField.val(data.gst);
+                    gstField.val(data.gst.description);
                 }
             })
             .catch(error => console.error('Error fetching GST:', error));
