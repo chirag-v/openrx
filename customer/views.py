@@ -28,7 +28,7 @@ def customer_list(request):
                 default='name',
                 output_field=CharField(),
             )
-        ).order_by('ordering_field')
+        ).order_by('-id')
 
     paginator = Paginator(customers, 10)  # Show 10 customers per page.
     page_number = request.GET.get('page')
@@ -52,9 +52,9 @@ def delete_customer(request, id):
     return render(request, 'customer/delete_customer.html', {'customer': customer})
 
 
-def customer_form(request, customer_id=None):
-    if customer_id:
-        customer = get_object_or_404(Customer, id=customer_id)
+def customer_form(request, id=None):
+    if id:
+        customer = get_object_or_404(Customer, id=id)
         form_title = "Edit Customer"
         submit_button_text = "Update"
     else:
