@@ -488,4 +488,13 @@ input[type="number"] {
     color: #ffffff; /* White text on hover */
 }
 
+.select2-container--default .select2-selection--single {
+  width: 100% !important; /* Ensures the dropdown stretches to the full width */
+}
 
+/* Ensure consistent styling for all GST fields */
+.gst-field {
+    background-color: #f8f9fa; /* Adjust the background color as needed */
+    font-size: 14px;
+    padding: 5px;
+}

@@ -1,11 +1,11 @@
 # purchase/urls.py
 from django.urls import path
-from .views import create_purchase, purchase_list, edit_purchase
+from .views import purchase_list, purchase_form
 
 urlpatterns = [
-    path('create', create_purchase, name='create_purchase'),
+    path('create', purchase_form, name='create_purchase'),
 
     path('purchase_list', purchase_list, name='purchase_list'),
 
-    path('edit/<int:pk>', edit_purchase, name='edit_purchase'),
+    path('edit/<int:id>', purchase_form, name='edit_purchase'),
 ]

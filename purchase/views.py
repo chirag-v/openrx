@@ -1,51 +1,20 @@
 # purchase/views.py
+from django.db import transaction
 from django.db.models import Q, CharField
 from django.db.models.functions import Cast
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import modelformset_factory
 from .models import Purchase, PurchaseItem
 from .forms import PurchaseForm, PurchaseItemForm
-from django.contrib import messages
 from django.core.paginator import Paginator
 
-
-def create_purchase(request):
-    PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm, extra=0)
-    if request.method == 'POST':
-        form = PurchaseForm(request.POST)
-        formset = PurchaseItemFormSet(request.POST, queryset=PurchaseItem.objects.none())
-
-        if form.is_valid() and formset.is_valid():
-            purchase = form.save()
-            for form in formset:
-                purchase_item = form.save(commit=False)
-                purchase_item.purchase = purchase
-                purchase_item.calculate_amount()
-                purchase_item.save()
-            purchase.calculate_gross_amount()
-            purchase.calculate_net_amount()
-            messages.success(request, 'Purchase created successfully with Material Receipt (MR) Number : MR' + str(purchase.id))
-            return redirect('purchase_list')
-        else:
-            messages.error(request, 'There was an error with your submission. Please check the form and try again.')
-    else:
-        form = PurchaseForm()
-        formset = PurchaseItemFormSet(queryset=PurchaseItem.objects.none())
-
-    return render(request, 'purchase/purchase_entry.html', {'form': form, 'formset': formset})
-
-
-create_purchase.view_name = 'Purchase Entry'
-create_purchase.synonyms = ['Add Purchase', 'Create Purchase', 'Add New Purchase', 'Create New Purchase',
-                            'Add Purchase Entry', 'Create Purchase Entry', 'Add New Purchase Entry',
-                            'Create New Purchase Entry']
 
 
 def purchase_list(request):
     search_query = request.GET.get('search', '')
     if search_query:
         purchases = Purchase.objects.annotate(
-            id_str=Cast('id',CharField())
+            id_str=Cast('id', CharField())
         ).filter(
             Q(invoice_number__icontains=search_query) |
             Q(id_str__icontains=search_query) |
@@ -64,29 +33,50 @@ purchase_list.view_name = 'List of Purchases'
 purchase_list.synonyms = ['List Purchases', 'View Purchases', 'Show Purchases', 'Display Purchases', 'MR number list',
                           'Material Receipt number list', 'View List of Purchases']
 
-def edit_purchase(request, pk):
-    purchase = get_object_or_404(Purchase, pk=pk)
-    PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm, extra=0, can_delete=True)
 
-    if request.method == 'POST':
+PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm, extra=1)
+
+def purchase_form(request, id=None):
+    if id:
+        # Editing an existing purchase
+        purchase = get_object_or_404(Purchase, id=id)
+        form_title = "Edit Purchase"
+        submit_button_text = "Update"
+        queryset = PurchaseItem.objects.filter(purchase=purchase)
+        is_editing = True  # Set flag to indicate editing mode
+    else:
+        # Creating a new purchase
+        purchase = None
+        form_title = "Create Purchase"
+        submit_button_text = "Submit"
+        queryset = PurchaseItem.objects.none()
+        is_editing = False  # Set flag to indicate creation mode
+
+    if request.method == "POST":
         form = PurchaseForm(request.POST, instance=purchase)
-        formset = PurchaseItemFormSet(request.POST, queryset=PurchaseItem.objects.filter(purchase=purchase))
+        formset = PurchaseItemFormSet(request.POST, queryset=queryset)
 
         if form.is_valid() and formset.is_valid():
-            form.save()
-            for form in formset:
-                purchase_item = form.save(commit=False)
-                purchase_item.purchase = purchase
-                purchase_item.calculate_amount()
-                purchase_item.save()
-            purchase.calculate_gross_amount()
-            purchase.calculate_net_amount()
-            messages.success(request, 'Purchase updated successfully')
-            return redirect('purchase_list')
-        else:
-            messages.error(request, 'There was an error with your submission. Please check the form and try again.')
+            with transaction.atomic():
+                purchase = form.save()
+                purchase_items = formset.save(commit=False)
+                for item in purchase_items:
+                    item.purchase = purchase
+                    item.save()
+                formset.save_m2m()
+            return redirect('purchase_list')  # Redirect to a purchase list or detail view
     else:
         form = PurchaseForm(instance=purchase)
-        formset = PurchaseItemFormSet(queryset=PurchaseItem.objects.filter(purchase=purchase))
+        formset = PurchaseItemFormSet(queryset=queryset)
 
-    return render(request, 'purchase/purchase_entry.html', {'form': form, 'formset': formset})
+    # Pass the flag to the template
+    return render(request, 'purchase/purchase_entry.html', {
+        'form': form,
+        'formset': formset,
+        'form_title': form_title,
+        'submit_button_text': submit_button_text,
+        'is_editing': is_editing,  # Pass the editing flag
+    })
+
+purchase_form.view_name = 'Purchase Entry'
+purchase_form.synonyms = ['Purchase Entry', 'Purchase Invoice', 'Purchase Create', 'Purchase Bill Entry']

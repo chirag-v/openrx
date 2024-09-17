@@ -11,94 +11,43 @@
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 </head>
 <body>
-    <header class="custom-header">
+    <header class="custom-header shadow-sm">
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
             <div class="container">
-                <a class="navbar-brand text-body-emphasis" href={% url 'homepage' %}>
-                    <img src="{% static 'logo/openrx-logo-small.png' %}" alt="OpenRx ERP" style="height: 50px; width: auto;">
+                <a class="navbar-brand text-light fw-bold" href={% url 'homepage' %}>
+                    <img src="{% static 'logo/openrx-logo-small.png' %}" alt="OpenRx ERP" class="me-2" style="height: 50px; width: auto;">
+                    OpenRxERP
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <!-- Customer Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuCustomer" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Customer
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuCustomer">
-                                <li><a class="dropdown-item" href="/customer/customer_list">List customers</a></li>
-                                <li><a class="dropdown-item" href="/customer/add_customer">Add customers</a></li>
-                            </ul>
-                        </li>
-                        <!-- Supplier Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuSupplier" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Supplier
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuSupplier">
-                                <li><a class="dropdown-item" href="/supplier/supplier_list">List Suppliers</a></li>
-                                <li><a class="dropdown-item" href="/supplier/add_supplier">Add Suppliers</a></li>
-                            </ul>
-                        </li>
-                        <!-- Company Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuCompany" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Company
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuCompany">
-                                <li><a class="dropdown-item" href="/company/company_list">List Company</a></li>
-                                <li><a class="dropdown-item" href="/company/add_company">Add Company</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/company/divisions/">List Divisions of Companies</a></li>
-                                <li><a class="dropdown-item" href="/company/divisions/create">Add a Division to a Company</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/company/add_medical_representative">Add a Medical Representative</a></li>
-                            </ul>
-                        </li>
-                        <!-- Item Dropdown --> 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuItem" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Item
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuItem">
-                                <li><a class="dropdown-item" href="/item/list">List Items</a></li>
-                                <li><a class="dropdown-item" href="/item/create">Add Items</a></li>
-                            </ul>
-                        </li>
-                        <!-- Purchase Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuPurchase" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Purchase
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuPurchase">
-                                <li><a class="dropdown-item" href="/purchase/create">Purchase Entry</a></li>
-                                <li><a class="dropdown-item" href="/purchase/purchase_list">Purchase List</a></li>
-                            </ul>
-                        </li>
-                        <!-- Sales Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuSales" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Sales
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuSales">
-                                <li><a class="dropdown-item" href="/sale/create">Sales Billing</a></li>
-                                <li><a class="dropdown-item" href="/sale/sale_list">View Sales Bill</a></li>
-                            </ul>
-                        </li>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <!-- Dynamic Dropdowns -->
+                        {% for menu in menus %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenu{{ forloop.counter }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ menu.name }}
+                                </a>
+                                <ul class="dropdown-menu shadow-lg" aria-labelledby="navbarDropdownMenu{{ forloop.counter }}">
+                                    {% for item in menu.items %}
+                                        <li><a class="dropdown-item" href="{{ item.url }}">{{ item.label }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
                     </ul>
                     {% if user.is_authenticated %}
                     <form class="d-flex position-relative mx-auto" id="search-form" onsubmit="return false;">
-                        <input class="form-control me-2" type="search" placeholder="Search Options" aria-label="Search" name="q" id="search-input">
-                        <div class="dropdown-menu" id="search-results" style="display: none; position: absolute; top: 100%; left: 0; right: 0;">
+                        <input class="form-control me-2 rounded-pill" type="search" placeholder="Search Options" aria-label="Search" name="q" id="search-input">
+                        <div class="dropdown-menu border-0 shadow" id="search-results" style="display: none; position: absolute; top: 100%; left: 0; right: 0;">
                             <!-- Search results will be appended here -->
                         </div>
                     </form>
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            <a class="nav-link text-light" href="{% url 'logout' %}">Logout</a>
                         </li>
                     </ul>
                     {% endif %}
