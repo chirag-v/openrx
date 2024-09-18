@@ -163,12 +163,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         newForm.innerHTML = `
             <td style="width:30%;"><select name="form-${rowIndex}-item" class="form-control select2 item-select">${createItemOptions(items)}</select></td>
-            <td style="width:7%;"><input type="number" name="form-${rowIndex}-mrp" class="form-control" required></td>
+            <td style="width:7%;"><input type="number" name="form-${rowIndex}-mrp" class="form-control mrp-field" required></td>
             <td style="width:5%;"><input type="number" name="form-${rowIndex}-quantity" class="form-control" required></td>
             <td style="width:5%;"><input type="number" name="form-${rowIndex}-free" class="form-control"></td>
             <td style="width:15%;"><input type="text" name="form-${rowIndex}-batch_number" class="form-control" required></td>
             <td style="width:10%;"><input type="text" id="expiry_date" name="form-${rowIndex}-expiry_date" class="form-control expiry-date" placeholder="MM/YY" pattern="\\d{2}/\\d{2}" maxlength="5" required></td>
-            <td style="width:7%;"><input type="number" name="form-${rowIndex}-purchase_rate" class="form-control" required></td>
+            <td style="width:7%;"><input type="number" name="form-${rowIndex}-purchase_rate" class="form-control purchase-rate-field" required></td>
             <td style="width:5%;"><input type="number" step="0.01" min="0" name="form-${rowIndex}-item_discount_percentage" class="form-control"></td>
             <td style="width:7%;"><input type="number" step="0.01" min="0" name="form-${rowIndex}-item_discount_amount" class="form-control"></td>
             <td style="width:5%;"><input type="text" name="form-${rowIndex}-gst" class="form-control gst-field" placeholder="12.00" readonly id="id_form-${rowIndex}-gst"></td>
@@ -188,6 +188,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Attach event listener to the new item dropdown for GST fetching
         attachGstFetchListener($(newForm).find('.item-select'));
+
+        // Attach event listener to the new item dropdown for fetching past purchase item data
+        attachPastDataFetchListener($(newForm).find('.item-select'));
 
         // Attach expiry date input listener
         attachExpiryDateInputListener(newForm);
@@ -227,12 +230,38 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (data.error) {
                             gstField.val('');
                         } else {
-                            gstField.val(data.gst.description);
+                            gstField.val(data.gst.percentage);
                         }
                     })
                     .catch(error => console.error('Error fetching GST:', error));
             } else {
                 gstField.val(''); // Clear GST field if no item is selected
+            }
+        });
+    }
+
+    function attachPastDataFetchListener(elements) {
+        elements.on('change', function () {
+            const itemId = $(this).val();
+
+            if (itemId) {
+                // Fetch PurchaseItem data
+                fetch(`/purchase/get_purchase_item_data/${itemId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            // Handle the error if needed
+                            console.error('Error fetching Purchase Item:', data.error);
+                        } else {
+                            // Assuming you have fields to update in the UI for mrp and discount
+                            $(this).closest('tr').find('.mrp-field').val(data.mrp);
+                            $(this).closest('tr').find('.purchase-rate-field').val(data.purchase_rate);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching Purchase Item:', error));
+            } else {
+                $(this).closest('tr').find('.mrp-field').val(''); // Clear MRP field
+                $(this).closest('tr').find('.purchase-rate-field').val(''); // Clear Discount field
             }
         });
     }
