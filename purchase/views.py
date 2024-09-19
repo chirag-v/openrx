@@ -5,7 +5,6 @@ from django.db.models.functions import Cast
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import modelformset_factory
 from .models import Purchase, PurchaseItem
-from django.http import JsonResponse
 from .forms import PurchaseForm, PurchaseItemForm
 from django.core.paginator import Paginator
 
@@ -81,14 +80,3 @@ def purchase_form(request, id=None):
 
 purchase_form.view_name = 'Purchase Entry'
 purchase_form.synonyms = ['Purchase Entry', 'Purchase Invoice', 'Purchase Create', 'Purchase Bill Entry']
-
-def get_purchase_item_data(request, item_id):
-    try:
-        purchase_item = PurchaseItem.objects.get(item_id=item_id)
-
-        return JsonResponse({
-            'mrp': purchase_item.mrp,
-            'purchase_rate': purchase_item.purchase_rate
-        })
-    except PurchaseItem.DoesNotExist:
-        return JsonResponse({'error': 'Purchase item not found'}, status=404)
