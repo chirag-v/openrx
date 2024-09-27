@@ -3,11 +3,11 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Purchase{% endblock %}
+{% block title %}{{ form_title }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-5">
-    <h2 class="text-center">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Purchase</h2>
+    <h2 class="text-center">{{ form_title }}</h2>
 
     <!-- Display form errors -->
     {% if form.errors %}
@@ -118,7 +118,7 @@
         </div>
         <button type="button" class="btn btn-primary" id="add-item">Add Item</button>
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success btn-lg">{% if form.instance.pk %}Update{% else %}Submit{% endif %}</button>
+            <button type="submit" class="btn btn-success btn-lg">{{ submit_button_text }}</button>
         </div>
     </form>
 </div>
@@ -126,7 +126,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Get the is_editing flag from the template context
-       const isEditing = {{ is_editing|yesno:"true,false"|safe }}; // Converts to "true" or "false" for JavaScript
+    const isEditing = {{ is_editing|yesno:"true,false"|safe }}; // Converts to "true" or "false" for JavaScript
 
 
     const addItemButton = document.getElementById('add-item');
@@ -238,12 +238,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Initialize GST for the first line on page load
-    fetchItems(function(items) {
-        addNewRow(items, true); // Initialize the first line with GST field correctly
-
-        // Attach the GST fetch listener for the first row
-        attachGstFetchListener($('.item-select'));
-    });
+    // if(!isEditing) {
+    //     fetchItems(function(items) {
+    //         addNewRow(items, true); // Initialize the first line with GST field correctly
+            
+    //         // Attach the GST fetch listener for the first row
+    //         attachGstFetchListener($('.item-select'));
+    //     });
+    // }
 
     // Handle add item button click
     addItemButton.addEventListener('click', function () {

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Purchase, PurchaseItem
@@ -16,7 +16,7 @@ class MMYYDateField(forms.DateField):
             raise forms.ValidationError('Enter a valid date in mm/yy format.')
 
     def prepare_value(self, value):
-        if isinstance(value, datetime):
+        if isinstance(value, (datetime, date)):
             return value.strftime('%m/%y')
         return value
 
