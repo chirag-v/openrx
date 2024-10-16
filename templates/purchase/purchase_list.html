@@ -60,7 +60,7 @@
                 <td>{{ purchase.net_amount }}</td>
                 <td>
                      <a href="{% url 'edit_purchase' purchase.id %}" class="btn btn-primary btn-sm">Edit</a>
-                     <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                     <a href="{% url 'delete_purchase' purchase.id %}" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
             {% endfor %}

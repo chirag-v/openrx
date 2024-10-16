@@ -34,7 +34,7 @@ purchase_list.synonyms = ['List Purchases', 'View Purchases', 'Show Purchases', 
                           'Material Receipt number list', 'View List of Purchases']
 
 
-PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm, extra=1)
+PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm)
 
 def purchase_form(request, id=None):
     if id:
@@ -44,6 +44,7 @@ def purchase_form(request, id=None):
         submit_button_text = "Update"
         queryset = PurchaseItem.objects.filter(purchase=purchase)
         is_editing = True  # Set flag to indicate editing mode
+        extra_forms = 0  # No extra form on edit
     else:
         # Creating a new purchase
         purchase = None
@@ -51,6 +52,10 @@ def purchase_form(request, id=None):
         submit_button_text = "Submit"
         queryset = PurchaseItem.objects.none()
         is_editing = False  # Set flag to indicate creation mode
+        extra_forms = 1  # One extra form on create
+
+    # Dynamically set the number of extra forms
+    PurchaseItemFormSet = modelformset_factory(PurchaseItem, form=PurchaseItemForm, extra=extra_forms)
 
     if request.method == "POST":
         form = PurchaseForm(request.POST, instance=purchase)
@@ -80,3 +85,10 @@ def purchase_form(request, id=None):
 
 purchase_form.view_name = 'Purchase Entry'
 purchase_form.synonyms = ['Purchase Entry', 'Purchase Invoice', 'Purchase Create', 'Purchase Bill Entry']
+
+def delete_purchase(request, id):
+    purchase = get_object_or_404(Purchase, pk=id)
+    if request.method == 'POST':  # Confirm deletion
+        purchase.delete()
+        return redirect('purchase_list')
+    return render(request, 'purchase/confirm_delete.html', {'purchase': purchase})
